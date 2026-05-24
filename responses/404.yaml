@@ -1,0 +1,8 @@
+description: Not Found
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ErrorMessage.yaml'
+    examples:
+      '404':
+        $ref: '../examples/404.yaml'

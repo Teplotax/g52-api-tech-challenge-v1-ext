@@ -1,0 +1,244 @@
+name: "2 - [DEV] Build and Deploy"
+
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  pages: write
+
+concurrency:
+  group: terraform-dev
+  cancel-in-progress: false
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::403339561517:role/github-actions-terraform-dev
+          aws-region: sa-east-1
+
+      - name: Extract API name from tfvars
+        id: api
+        working-directory: infra
+        run: |
+          API_NAME=$(grep -E '^api_name\s*=' inventories/dev/terraform.tfvars | awk -F '=' '{gsub(/[" ]/, "", $2); print $2}')
+          echo "API_NAME=$API_NAME" >> $GITHUB_OUTPUT
+
+      - name: Read destroy flag from tfvars
+        id: flags
+        working-directory: infra
+        run: |
+          DESTROY=$(grep -E '^destroy\s*=' inventories/dev/terraform.tfvars | awk -F '=' '{gsub(/[[:space:]]/, "", $2); print $2}')
+          echo "DESTROY=$DESTROY" >> $GITHUB_OUTPUT
+
+      - name: Extract API Gateway ID from tfvars
+        id: apigw
+        working-directory: infra
+        run: |
+          APIGW_ID=$(grep -E '^apigateway_id\s*=' inventories/dev/terraform.tfvars | awk -F '=' '{gsub(/[" ]/, "", $2); print $2}')
+          echo "APIGW_ID=$APIGW_ID" >> $GITHUB_OUTPUT
+
+      - name: Bundle and resolve OpenAPI spec
+        run: |
+          npm install -g @redocly/cli
+          redocly bundle template-api-v1-ext.yaml -o infra/openapi-resolved.json --ext json --dereferenced
+
+          python3 - <<'EOF'
+          import re
+
+          vars = {}
+          with open("infra/inventories/dev/terraform.tfvars") as f:
+              for line in f:
+                  line = line.strip()
+                  if not line or line.startswith("#"):
+                      continue
+                  key, _, value = line.partition("=")
+                  vars[key.strip()] = value.strip().strip('"')
+
+          with open("infra/openapi-resolved.json") as f:
+              content = f.read()
+
+          content = re.sub(
+              r'\$\{(\w+)\}',
+              lambda m: vars.get(m.group(1), m.group(0)),
+              content
+          )
+
+          with open("infra/openapi-resolved.json", "w") as f:
+              f.write(content)
+
+          print("Substitutions done.")
+          EOF
+
+      - name: Import OpenAPI spec into API Gateway
+        if: steps.flags.outputs.DESTROY != 'true'
+        run: |
+          aws apigateway put-rest-api \
+            --rest-api-id "${{ steps.apigw.outputs.APIGW_ID }}" \
+            --mode merge \
+            --body fileb://infra/openapi-resolved.json
+
+      - name: Terraform Init
+        working-directory: infra
+        run: |
+          terraform init -reconfigure \
+            -backend-config="bucket=teplotax-terraform-state-dev" \
+            -backend-config="key=dev/${{ steps.api.outputs.API_NAME }}/doc/terraform.tfstate" \
+            -backend-config="region=sa-east-1"
+
+      - name: Debug destroy flag
+        run: echo "DESTROY=${{ steps.flags.outputs.DESTROY }}"
+
+      - name: Terraform Validate
+        working-directory: infra
+        run: terraform validate
+
+      - name: Terraform Plan
+        if: github.event_name == 'pull_request'
+        working-directory: infra
+        run: |
+          terraform plan \
+            -var-file=inventories/dev/terraform.tfvars
+
+      - name: Terraform Destroy
+        if: steps.flags.outputs.DESTROY == 'true' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        working-directory: infra
+        run: |
+          terraform destroy -auto-approve \
+            -var-file=inventories/dev/terraform.tfvars
+
+      - name: Terraform Apply
+        if: steps.flags.outputs.DESTROY != 'true' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        working-directory: infra
+        run: |
+          terraform apply -auto-approve \
+            -var-file=inventories/dev/terraform.tfvars
+      - name: Upload OpenAPI resolved spec
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-resolved
+          path: infra/openapi-resolved.json
+    outputs:
+      api_name: ${{ steps.api.outputs.API_NAME }}
+  deploy_docs:
+    needs: terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download OpenAPI resolved spec
+        uses: actions/download-artifact@v4
+        with:
+          name: openapi-resolved
+          path: infra
+
+      - name: Push OpenAPI spec to docs repo
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git clone https://x-access-token:${{ secrets.DOCS_REPO_TOKEN }}@github.com/Teplotax/doc-${{ needs.terraform.outputs.api_name }}.git docs-repo
+          cd docs-repo
+          # Ensure we are on develop branch (fetch if not default)
+          git fetch origin develop || true
+          git checkout develop || git checkout -b develop
+          cd ..
+          cp infra/openapi-resolved.json docs-repo/openapi.json
+          cd docs-repo
+          git add openapi.json
+          git commit -m "Update OpenAPI spec from $GITHUB_REPOSITORY@$GITHUB_SHA" || echo "No changes to commit"
+          git push origin develop
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+  create:
+    name: Create PR
+    needs: [terraform, deploy_docs]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Determine next version
+        id: version
+        run: |
+          git fetch --all
+
+          LAST=$(git for-each-ref \
+            --format='%(refname:short)' \
+            refs/remotes/origin/release/v* \
+            | sed 's|origin/release/v||' \
+            | sort -V \
+            | tail -n 1)
+
+          if [ -z "$LAST" ]; then
+            NEXT="0.0.1"
+          else
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$LAST"
+            PATCH=$((PATCH + 1))
+            NEXT="$MAJOR.$MINOR.$PATCH"
+          fi
+
+          echo "next_version=$NEXT" >> "$GITHUB_OUTPUT"
+
+      - name: Create or reuse release branch
+        id: branch
+        run: |
+          VERSION="${{ steps.version.outputs.next_version }}"
+          BRANCH="release/v$VERSION"
+
+          git fetch --all
+
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "Branch already exists. Reusing."
+          else
+            git checkout main
+            git pull origin main
+            git checkout -b "$BRANCH"
+            git push origin "$BRANCH"
+          fi
+
+          echo "branch_name=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Create PR (develop → release)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="${{ steps.branch.outputs.branch_name }}"
+
+          EXISTS=$(gh pr list \
+            --head develop \
+            --base "$BRANCH" \
+            --state open \
+            --json number \
+            --jq 'length')
+
+          if [ "$EXISTS" -eq "0" ]; then
+            gh pr create \
+              --base "$BRANCH" \
+              --head develop \
+              --title "Release $BRANCH" \
+              --body "Promoting develop into $BRANCH"
+          else
+            echo "PR already exists. Skipping."
+          fi

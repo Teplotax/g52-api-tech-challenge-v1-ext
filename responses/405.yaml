@@ -1,0 +1,8 @@
+description: Method Not Allowed
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ErrorMessage.yaml'
+    examples:
+      '405':
+        $ref: '../examples/405.yaml'

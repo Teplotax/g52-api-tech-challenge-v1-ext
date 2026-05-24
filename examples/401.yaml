@@ -1,0 +1,3 @@
+value:
+  message: "Conteúdo da mensagem"
+  exceptionType: "Unauthorized"

@@ -1,0 +1,8 @@
+description: Internal Server Error
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ErrorMessage.yaml'
+    examples:
+      '500':
+        $ref: '../examples/500.yaml'

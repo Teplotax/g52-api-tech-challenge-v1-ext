@@ -1,0 +1,26 @@
+{
+  "request": {
+    "headers": [
+      {
+        "name": "x-correlationid",
+        "value": "string"
+      }
+    ],
+    "query": [],
+    "params": []
+  },
+  "response": {
+    "headers": [
+      {
+        "name": "Content-type",
+        "value": "application/json"
+      }
+    ],
+    "status": 200,
+    "content": {
+      "body": {
+        "message": "Hello World"
+      }
+    }
+  }
+}

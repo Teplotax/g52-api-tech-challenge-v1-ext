@@ -1,0 +1,140 @@
+openapi: 3.0.0
+info:
+  title: Template API Gateway
+  description: |
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit.  
+    Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+    ### Features
+
+    - Fast and reliable
+    - Secure endpoints
+    - Easy integration
+
+    ### Example Table
+
+    | Method | Endpoint   | Description           |
+    |--------|------------|-----------------------|
+    | GET    | /hello     | Returns hello world   |
+    | POST   | /goodbye   | Says goodbye         |
+
+    > Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    >
+    > Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com/v1
+    description: Development
+
+tags:
+  - name: Hello World
+    description: Endpoints related to Hello World operations.
+
+paths:
+  /hello:
+    get:
+      tags:
+        - Hello World
+      summary: Consulta Hello World
+      description: |
+        Endpoint para consultar hello world
+      operationId: get/hello-world
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      responses:
+        "200":
+          description: Responde hello world
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HelloWorldResponse"
+              examples:
+                HelloWorldResponse:
+                  $ref: "#/components/examples/HelloWorldResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+#      security:
+#        - APIGatewaySTSAuthorizer:
+#            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+#        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/hello"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
+components:
+  parameters:
+    x_correlationid:
+      $ref: ./parameters/x_correlationid.yaml
+  schemas:
+    HelloWorldResponse:
+      $ref: ./schemas/HelloWorldResponse.yaml
+  examples:
+    HelloWorldResponse:
+      $ref: ./examples/200HelloWorldResponse.yaml
+  responses:
+    '400':
+      $ref: ./responses/400.yaml
+    '401':
+      $ref: ./responses/401.yaml
+    '403':
+      $ref: ./responses/403.yaml
+    '404':
+      $ref: ./responses/404.yaml
+    '405':
+      $ref: ./responses/405.yaml
+    '422':
+      $ref: ./responses/422.yaml
+    '500':
+      $ref: ./responses/500.yaml
+    '503':
+      $ref: ./responses/503.yaml
+    '504':
+      $ref: ./responses/504.yaml
+
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+  params-only:
+    validateRequestBody: false
+    validateRequestParameters: true
+x-amazon-apigateway-gateway-responses:
+  UNAUTHORIZED:
+    statusCode: 401
+    responseTemplates:
+      application/json: "{\n \"message\": \"Expired Token\" \n }"
+DEFAULT_5XX:
+  statusCode: 503
+  responseTemplates:
+    application/json: "{\n \"message\": \"Sorry, for broke student reasons the servers are scheduled to operate only between 2pm and 8pm\",\n \"exceptionType\": \"Service Unavailable\" \n }"
+x-amazon-apigateway-policy:
+  Version: 2012-10-17
+  Statement:
+    - Effect: Allow
+      Principal: "*"
+      Action: execute-api:Invoke
+      Resource: "*"

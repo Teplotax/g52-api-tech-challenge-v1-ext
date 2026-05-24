@@ -1,0 +1,8 @@
+description: Gateway Timeout
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ErrorMessage.yaml'
+    examples:
+      '504':
+        $ref: '../examples/504.yaml'
