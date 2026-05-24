@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Template API Gateway
+  title: API Tech Challenge
   description: |
     Lorem ipsum dolor sit amet, consectetur adipiscing elit.  
     Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -41,7 +41,7 @@ paths:
       summary: Consulta Hello World
       description: |
         Endpoint para consultar hello world
-      operationId: get/hello-world
+      operationId: get/hello
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
       responses:
