@@ -142,6 +142,7 @@ jobs:
   deploy_docs:
     needs: terraform
     runs-on: ubuntu-latest
+    if: always()
     steps:
       - name: Download OpenAPI resolved spec
         uses: actions/download-artifact@v4
