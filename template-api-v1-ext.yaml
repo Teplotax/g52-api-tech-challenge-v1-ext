@@ -1,7 +1,8 @@
 openapi: 3.0.0
 info:
-  title: Template API Gateway
+  title: API Tech Challenge
   description: |
+    Test destroy resources
     Lorem ipsum dolor sit amet, consectetur adipiscing elit.  
     Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
@@ -29,51 +30,55 @@ servers:
   - url: https://api.example.com/v1
     description: Development
 
-tags:
-  - name: Hello World
-    description: Endpoints related to Hello World operations.
-
 paths:
-  /hello:
+  /clientes/{clienteId}:
     get:
       tags:
-        - Hello World
-      summary: Consulta Hello World
+        - Clientes
+      summary: Consultar Cliente
       description: |
-        Endpoint para consultar hello world
-      operationId: get/hello-world
+        Endpoint para consulta de cliente por clienteId
+      operationId: get/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - name: clienteId
+          in: path
+          description: Identificador do cliente
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: Responde hello world
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HelloWorldResponse"
+                $ref: "#/components/schemas/FindClienteResponse"
               examples:
                 HelloWorldResponse:
-                  $ref: "#/components/examples/HelloWorldResponse"
+                  $ref: "#/components/examples/FindClienteResponse"
         "400":
           $ref: "#/components/responses/400"
         "401":
           $ref: "#/components/responses/401"
         "403":
           $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
         "405":
           $ref: "#/components/responses/405"
         "500":
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-#      security:
-#        - APIGatewaySTSAuthorizer:
-#            - none
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-#        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "http://${loadBalancerDnsMain}/hello"
         responses:
           default:
@@ -82,19 +87,74 @@ paths:
         connectionType: "VPC_LINK"
         connectionId: "${vpclink}"
         requestParameters:
+          integration.request.path.clienteId: "method.request.path.clienteId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
+#  /hello:
+#    get:
+#      tags:
+#        - Hello World
+#      summary: Consulta Hello World
+#      description: |
+#        Endpoint para consultar hello world
+#      operationId: get/hello
+#      parameters:
+#        - $ref: "#/components/parameters/x_correlationid"
+#      responses:
+#        "200":
+#          description: Responde hello world
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/HelloWorldResponse"
+#              examples:
+#                HelloWorldResponse:
+#                  $ref: "#/components/examples/HelloWorldResponse"
+#        "400":
+#          $ref: "#/components/responses/400"
+#        "401":
+#          $ref: "#/components/responses/401"
+#        "403":
+#          $ref: "#/components/responses/403"
+#        "405":
+#          $ref: "#/components/responses/405"
+#        "500":
+#          $ref: "#/components/responses/500"
+#        "503":
+#          $ref: "#/components/responses/503"
+##      security:
+##        - APIGatewaySTSAuthorizer:
+##            - none
+#      x-amazon-apigateway-integration:
+#        timeoutInMillis: 14000
+#        type: "http_proxy"
+#        httpMethod: "GET"
+##        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+#        uri: "http://${loadBalancerDnsMain}/hello"
+#        responses:
+#          default:
+#            statusCode: "503"
+#        passthroughBehavior: "when_no_match"
+#        connectionType: "VPC_LINK"
+#        connectionId: "${vpclink}"
+#        requestParameters:
+#          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+#      x-amazon-apigateway-request-validator: params-only
 
 components:
   parameters:
     x_correlationid:
       $ref: ./parameters/x_correlationid.yaml
   schemas:
-    HelloWorldResponse:
-      $ref: ./schemas/HelloWorldResponse.yaml
+    FindClienteResponse:
+      $ref: ./schemas/FindClienteResponse.yaml
+#    HelloWorldResponse:
+#      $ref: ./schemas/HelloWorldResponse.yaml
   examples:
-    HelloWorldResponse:
-      $ref: ./examples/200HelloWorldResponse.yaml
+    FindClienteResponse:
+      $ref: ./examples/200FindClienteResponse.yaml
+#    HelloWorldResponse:
+#      $ref: ./examples/200HelloWorldResponse.yaml
   responses:
     '400':
       $ref: ./responses/400.yaml

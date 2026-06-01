@@ -1,0 +1,51 @@
+{
+  "request": {
+    "headers": [
+      {
+        "name": "x-correlationid",
+        "value": "string"
+      }
+    ],
+    "query": [],
+    "params": [
+      {
+        "name": "clienteId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Identificador do cliente"
+      }
+    ]
+  },
+  "response": {
+    "headers": [
+      {
+        "name": "Content-type",
+        "value": "application/json"
+      }
+    ],
+    "status": 200,
+    "content": {
+      "body": {
+        "nomeSocial": "Maria Oliveira",
+        "nome": "Marcos Antônio Oliveira",
+        "tipoDocumento": "CPF",
+        "documento": "55563271064",
+        "email": "maria.oliveira@email.com",
+        "telefone": "11988887777",
+        "contatoWhatsApp": false,
+        "endereco": {
+          "logradouro": "Avenida Brasil",
+          "numero": "456",
+          "complemento": "Casa",
+          "bairro": "Jardim América",
+          "cidade": "São Paulo",
+          "uf": "SP",
+          "cep": "01432000"
+        }
+      }
+    }
+  }
+}

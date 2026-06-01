@@ -6,9 +6,9 @@ deploy:
     dev:
       account: "403339561517"
       apigateway:
-        apigatewayId: "bxk7xj6w2j"
-      vpclink: "o8b250"
-      loadBalancerDnsMain: "application-name-lb-688f86f9aa9c196a.elb.sa-east-1.amazonaws.com:8080"
+        apigatewayId: "qb4fdcj5xg"
+      vpclink: "txypyt"
+      loadBalancerDnsMain: "tech-challenge-lb-f602dac972c5f268.elb.sa-east-1.amazonaws.com:8080"
 
 infra:
   terraform:
