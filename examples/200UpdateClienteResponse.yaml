@@ -1,11 +1,11 @@
-summary: Exemplo de resposta para criação de um cliente
+summary: Exemplo de resposta para atualização de um cliente
 value:
-  nomeSocial: "Maria Oliveira"
+  nomeSocial: "Maria"
   nome: "Marcos Antônio Oliveira"
   tipoDocumento: "CPF"
   documento: "55563271064"
   email: "maria.oliveira@email.com"
-  telefone: "11988887777"
+  telefone: "47988887777"
   contatoWhatsApp: true
   endereco:
     logradouro: "Avenida Brasil"
