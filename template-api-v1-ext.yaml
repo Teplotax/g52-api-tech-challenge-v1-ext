@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: API Tech Challenge
+  title: API G52 Tech Challenge
   description: |
     Test destroy resources
     Lorem ipsum dolor sit amet, consectetur adipiscing elit.  
