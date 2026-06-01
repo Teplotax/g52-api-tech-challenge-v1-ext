@@ -1,4 +1,4 @@
-summary: Exemplo de resposta para consulta de um cliente
+summary: Exemplo de request para criação de um cliente
 value:
   nomeSocial: "Maria Oliveira"
   nome: "Marcos Antônio Oliveira"
