@@ -10,7 +10,7 @@
     "params": [
       {
         "name": "clienteId",
-        "value": "string"
+        "value": "integer"
       }
     ]
   },
