@@ -6,7 +6,7 @@ value:
   documento: "55563271064"
   email: "maria.oliveira@email.com"
   telefone: "11988887777"
-  contatoWhatsApp: false
+  contatoWhatsApp: true
   endereco:
     logradouro: "Avenida Brasil"
     numero: "456"
