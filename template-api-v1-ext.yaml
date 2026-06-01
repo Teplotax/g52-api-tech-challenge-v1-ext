@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: API Tech Challenge
+  title: API G52 Tech Challenge
   description: |
     Test destroy resources
     Lorem ipsum dolor sit amet, consectetur adipiscing elit.  
@@ -31,6 +31,64 @@ servers:
     description: Development
 
 paths:
+  /clientes:
+    post:
+      tags:
+        - Clientes
+      summary: Criar Cliente
+      description: |
+        Endpoint para criar um cliente
+      operationId: post/clientes
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClienteRequest"
+            examples:
+              CreateClienteRequest:
+                $ref: "#/components/examples/CreateClienteRequest"
+      responses:
+        "201":
+          description: Cliente criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateClienteResponse"
+              examples:
+                CreateClienteResponse:
+                  $ref: "#/components/examples/CreateClienteResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/clientes"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
   /clientes/{clienteId}:
     get:
       tags:
@@ -38,7 +96,7 @@ paths:
       summary: Consultar Cliente
       description: |
         Endpoint para consulta de cliente por clienteId
-      operationId: get/clientes
+      operationId: get/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
         - name: clienteId
@@ -49,13 +107,13 @@ paths:
             type: string
       responses:
         "200":
-          description: Responde hello world
+          description: Cliente consultado
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/FindClienteResponse"
               examples:
-                HelloWorldResponse:
+                FindClienteResponse:
                   $ref: "#/components/examples/FindClienteResponse"
         "400":
           $ref: "#/components/responses/400"
@@ -79,7 +137,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/hello"
+        uri: "http://${loadBalancerDnsMain}/clientes/{clienteId}"
         responses:
           default:
             statusCode: "503"
@@ -148,11 +206,19 @@ components:
   schemas:
     FindClienteResponse:
       $ref: ./schemas/FindClienteResponse.yaml
+    CreateClienteRequest:
+      $ref: ./schemas/CreateClienteRequest.yaml
+    CreateClienteResponse:
+      $ref: ./schemas/CreateClienteResponse.yaml
 #    HelloWorldResponse:
 #      $ref: ./schemas/HelloWorldResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
+    CreateClienteRequest:
+      $ref: ./examples/requests/CreateClienteRequest.yaml
+    CreateClienteResponse:
+      $ref: ./examples/201CreateClienteResponse.yaml
 #    HelloWorldResponse:
 #      $ref: ./examples/200HelloWorldResponse.yaml
   responses:

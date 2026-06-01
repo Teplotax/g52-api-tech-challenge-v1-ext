@@ -56,3 +56,18 @@ properties:
       cep:
         type: string
         description: Código Postal (CEP)
+    required:
+      - logradouro
+      - numero
+      - bairro
+      - cidade
+      - uf
+      - cep
+required:
+  - nome
+  - tipoDocumento
+  - documento
+  - email
+  - telefone
+  - contatoWhatsApp
+  - endereco
