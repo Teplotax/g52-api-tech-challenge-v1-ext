@@ -10,12 +10,7 @@
     "params": [
       {
         "name": "clienteId",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "type": "string"
-        },
-        "description": "Identificador do cliente"
+        "value": "string"
       }
     ]
   },
