@@ -1,0 +1,6 @@
+description: O recurso foi atualizado com êxito, mas não está retornando a representação do recurso
+headers:
+  Content-Location:
+    description: URI correspondente ao elemento atualizado
+    schema:
+      type: string

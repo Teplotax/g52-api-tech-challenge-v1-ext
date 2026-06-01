@@ -1,0 +1,26 @@
+{
+  "request": {
+    "headers": [
+      {
+        "name": "x-correlationid",
+        "value": "string"
+      }
+    ],
+    "query": [],
+    "params": [
+      {
+        "name": "clienteId",
+        "value": "integer"
+      }
+    ]
+  },
+  "response": {
+    "headers": [
+      {
+        "name": "Content-type",
+        "value": "application/json"
+      }
+    ],
+    "status": 204
+  }
+}
