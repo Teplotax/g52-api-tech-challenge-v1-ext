@@ -1,7 +1,8 @@
 summary: Exemplo de resposta paginada para consulta de clientes
 value:
   content:
-    - nomeSocial: "Maria Oliveira"
+    - id: 1
+      nomeSocial: "Maria Oliveira"
       nome: "Marcos Antônio Oliveira"
       tipoDocumento: "CPF"
       documento: "55563271064"
@@ -16,7 +17,9 @@ value:
         cidade: "São Paulo"
         uf: "SP"
         cep: "01432000"
-    - nomeSocial: "Douglas Pereira"
+
+    - id: 2
+      nomeSocial: "Douglas Pereira"
       nome: "Jonathan Douglas Pereira"
       tipoDocumento: "CPF"
       documento: "84673421027"
@@ -31,7 +34,8 @@ value:
         cidade: "Rio de Janeiro"
         uf: "RJ"
         cep: "22041001"
-    - nomeSocial: "João Silva"
+    - id: 3
+      nomeSocial: "João Silva"
       nome: "João Silva"
       tipoDocumento: "CPF"
       documento: "93364249040"
@@ -46,7 +50,8 @@ value:
         cidade: "Blumenau"
         uf: "SC"
         cep: "89010000"
-    - nomeSocial: "Oficina ABC"
+    - id: 4
+      nomeSocial: "Oficina ABC"
       nome: "Oficina e Comércio de Peças Automotivas ABC Ltda"
       tipoDocumento: "CNPJ"
       documento: "72781890000127"
