@@ -1,0 +1,38 @@
+summary: Exemplo de resposta paginada para consulta de veículos
+value:
+  content:
+    - id: 1
+      clienteId: 1
+      placa: "FSC1123S"
+      marca: "Volkswagen"
+      modelo: "Gol"
+      cor: "Branco"
+      ano: 2011
+
+    - id: 2
+      clienteId: 2
+      placa: "MGI1318"
+      marca: "Toyota"
+      modelo: "Hilux"
+      cor: "Cinza"
+      ano: 2020
+
+    - id: 3
+      clienteId: 3
+      placa: "MLK5274"
+      marca: "Chevrolet"
+      modelo: "Onix"
+      cor: "Branco"
+      ano: 2009
+
+    - id: 4
+      clienteId: 3
+      placa: "LXH7780"
+      marca: "Ford"
+      modelo: "Ka"
+      cor: "Vermelho"
+      ano: 2001
+  page: 0
+  size: 20
+  totalElements: 4
+  totalPages: 1

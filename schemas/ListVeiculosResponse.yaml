@@ -1,0 +1,41 @@
+type: object
+properties:
+  content:
+    type: array
+    description: Lista de veiculos
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador do veículo
+        clienteId:
+          type: integer
+          description: Identificador do cliente proprietário do veículo
+        placa:
+          type: string
+          description: Placa do veículo
+        marca:
+          type: string
+          description: Marca do veículo
+        modelo:
+          type: string
+          description: Modelo do veículo
+        cor:
+          type: string
+          description: Cor do veículo
+        ano:
+          type: integer
+          description: Ano de fabricação do veículo
+  page:
+    type: integer
+    description: Número da página
+  size:
+    type: integer
+    description: Número de clientes por página
+  totalElements:
+    type: integer
+    description: Número total de clientes
+  totalPages:
+    type: integer
+    description: Número total de páginas

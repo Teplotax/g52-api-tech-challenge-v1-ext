@@ -1,0 +1,17 @@
+type: object
+properties:
+  clienteId:
+    type: integer
+    description: Identificador do cliente proprietário do veículo
+  modeloId:
+    type: integer
+    description: Identificador do modelo do veículo
+  placa:
+    type: string
+    description: Placa do veículo
+  cor:
+    type: string
+    description: Cor do veículo
+  ano:
+    type: integer
+    description: Ano de fabricação do veículo
