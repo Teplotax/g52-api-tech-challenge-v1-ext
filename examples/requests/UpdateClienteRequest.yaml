@@ -1,0 +1,4 @@
+summary: Exemplo de request para atualização de um cliente
+value:
+  nomeSocial: "Maria"
+  telefone: "47988887777"
