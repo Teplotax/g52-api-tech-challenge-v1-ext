@@ -89,7 +89,141 @@ paths:
         requestParameters:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Clientes
+      summary: Listar Clientes
+      description: |
+        Endpoint para listar de cliente por clienteId
+      operationId: get/clientes
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Número de clientes por página
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Clientes listados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListClientesResponse"
+              examples:
+                ListClientesResponse:
+                  $ref: "#/components/examples/ListClientesResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/clientes"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.querystring.page: "method.request.querystring.page"
+          integration.request.querystring.size: "method.request.querystring.size"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
   /clientes/{clienteId}:
+    put:
+      tags:
+        - Clientes
+      summary: Atualizar Cliente
+      description: |
+        Endpoint para atualizar um cliente
+      operationId: put/clientes/{clienteId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: clienteId
+          in: path
+          description: Identificador do cliente
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateClienteRequest"
+            examples:
+              UpdateClienteRequest:
+                $ref: "#/components/examples/UpdateClienteRequest"
+      responses:
+        "200":
+          description: Cliente atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateClienteResponse"
+              examples:
+                UpdateClienteResponse:
+                  $ref: "#/components/examples/UpdateClienteResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "PUT"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/clientes/{clienteId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.clienteId: "method.request.path.clienteId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
     get:
       tags:
         - Clientes
@@ -104,7 +238,8 @@ paths:
           description: Identificador do cliente
           required: true
           schema:
-            type: string
+            type: integer
+          example: 1
       responses:
         "200":
           description: Cliente consultado
@@ -136,6 +271,58 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/clientes/{clienteId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.clienteId: "method.request.path.clienteId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    delete:
+      tags:
+        - Clientes
+      summary: Deletar Cliente
+      description: |
+        Endpoint para deleção de cliente por clienteId
+      operationId: delete/clientes/{clienteId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: clienteId
+          in: path
+          description: Identificador do cliente
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "DELETE"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "http://${loadBalancerDnsMain}/clientes/{clienteId}"
         responses:
@@ -210,6 +397,12 @@ components:
       $ref: ./schemas/CreateClienteRequest.yaml
     CreateClienteResponse:
       $ref: ./schemas/CreateClienteResponse.yaml
+    UpdateClienteRequest:
+      $ref: ./schemas/UpdateClienteRequest.yaml
+    UpdateClienteResponse:
+      $ref: ./schemas/UpdateClienteResponse.yaml
+    ListClientesResponse:
+      $ref: ./schemas/ListClientesResponse.yaml
 #    HelloWorldResponse:
 #      $ref: ./schemas/HelloWorldResponse.yaml
   examples:
@@ -219,9 +412,18 @@ components:
       $ref: ./examples/requests/CreateClienteRequest.yaml
     CreateClienteResponse:
       $ref: ./examples/201CreateClienteResponse.yaml
-#    HelloWorldResponse:
+    UpdateClienteRequest:
+      $ref: ./examples/requests/UpdateClienteRequest.yaml
+    UpdateClienteResponse:
+      $ref: ./examples/200UpdateClienteResponse.yaml
+    ListClientesResponse:
+      $ref: ./examples/200ListClienteResponse.yaml
+      yaml:
+  #    HelloWorldResponse:
 #      $ref: ./examples/200HelloWorldResponse.yaml
   responses:
+    '204':
+      $ref: ./responses/204.yaml
     '400':
       $ref: ./responses/400.yaml
     '401':
