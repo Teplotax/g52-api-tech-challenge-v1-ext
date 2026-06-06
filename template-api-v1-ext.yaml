@@ -336,65 +336,65 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
   /clientes/documento/{documento}:
-  get:
-    tags:
-      - Clientes
-    summary: Consultar Cliente por documento
-    description: |
-      Endpoint para consulta de cliente por documento
-    operationId: get/clientes/documento/{documento}
-    parameters:
-      - $ref: "#/components/parameters/x_correlationid"
-      - name: documento
-        in: path
-        description: Número do documento de identificação
-        required: true
-        schema:
-          type: string
-        example: "05583977000100"
-    responses:
-      "200":
-        description: Cliente consultado por documento
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/FindClienteResponse"
-            examples:
-              FindClienteResponse:
-                $ref: "#/components/examples/FindClienteResponse"
-      "400":
-        $ref: "#/components/responses/400"
-      "401":
-        $ref: "#/components/responses/401"
-      "403":
-        $ref: "#/components/responses/403"
-      "404":
-        $ref: "#/components/responses/404"
-      "405":
-        $ref: "#/components/responses/405"
-      "500":
-        $ref: "#/components/responses/500"
-      "503":
-        $ref: "#/components/responses/503"
-    #      security:
-    #        - APIGatewaySTSAuthorizer:
-    #            - none
-    x-amazon-apigateway-integration:
-      timeoutInMillis: 14000
-      type: "http_proxy"
-      httpMethod: "GET"
-      #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-      uri: "http://${loadBalancerDnsMain}/clientes/documento/{documento}"
+    get:
+      tags:
+        - Clientes
+      summary: Consultar Cliente por documento
+      description: |
+        Endpoint para consulta de cliente por documento
+      operationId: get/clientes/documento/{documento}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: documento
+          in: path
+          description: Número do documento de identificação
+          required: true
+          schema:
+            type: string
+          example: "05583977000100"
       responses:
-        default:
-          statusCode: "503"
-      passthroughBehavior: "when_no_match"
-      connectionType: "VPC_LINK"
-      connectionId: "${vpclink}"
-      requestParameters:
-        integration.request.path.documento: "method.request.path.documento"
-        integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-    x-amazon-apigateway-request-validator: params-only
+        "200":
+          description: Cliente consultado por documento
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindClienteResponse"
+              examples:
+                FindClienteResponse:
+                  $ref: "#/components/examples/FindClienteResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/clientes/documento/{documento}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.documento: "method.request.path.documento"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
 
   /veiculos:
     post:
