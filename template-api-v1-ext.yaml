@@ -700,6 +700,66 @@ paths:
           integration.request.path.veiculoId: "method.request.path.veiculoId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
+  /veiculos/placa/{placa}:
+    get:
+      tags:
+        - Veículos
+      summary: Consultar Veículo por placa
+      description: |
+        Endpoint para consulta de veículos por placa
+      operationId: get /veiculos/placa/{placa}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: placa
+          in: path
+          description: Placa do veículo
+          required: true
+          schema:
+            type: string
+          example: ABC1234 ou ABC1D23
+      responses:
+        "200":
+          description: Veículo consultado por placa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindVeiculoResponse"
+              examples:
+                FindVeiculoResponse:
+                  $ref: "#/components/examples/FindVeiculoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/veiculos/placa/{placa}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.placa: "method.request.path.placa"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
 
 components:
   parameters:
