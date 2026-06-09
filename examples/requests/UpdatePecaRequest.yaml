@@ -1,0 +1,8 @@
+summary: Exemplo de request para criação de uma peça
+value:
+  preco: 18.84
+
+  aplicacoes:
+    - modeloId: 4
+      anoInicio: 2006
+      anoFim: 2015

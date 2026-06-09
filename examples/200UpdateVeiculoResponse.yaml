@@ -1,0 +1,8 @@
+summary: Exemplo de resposta para atualização de um veículo
+value:
+  clienteId: 1
+  placa: "FSC1123S"
+  marca: "Volkswagen"
+  modelo: "Gol"
+  cor: "Branco"
+  ano: 2010
