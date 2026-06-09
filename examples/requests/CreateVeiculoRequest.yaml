@@ -1,0 +1,7 @@
+summary: Exemplo de request para criação de um veículo
+value:
+  clienteId: 1
+  modeloId: 7
+  placa: "FSC1123S"
+  cor: "Branco"
+  ano: 2011

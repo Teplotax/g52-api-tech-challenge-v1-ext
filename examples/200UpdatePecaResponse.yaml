@@ -1,0 +1,14 @@
+summary: Exemplo de resposta para atualização de uma peça
+value:
+  sku: FILTRO_OLEO_01100
+  ean: "78913420103231122"
+  nome: Filtro de óleo X
+  preco: 18.84
+  estoque: 0
+  estoqueMinimo: 1
+  tipoPeca: FILTRO_OLEO
+
+  aplicacoes:
+    - modeloId: 4
+      anoInicio: 2006
+      anoFim: 2015

@@ -1,0 +1,15 @@
+summary: Exemplo de resposta para consulta de uma peça
+value:
+  sku: FILTRO_OLEO_001
+  ean: "7891342010177"
+  nome: Filtro Óleo Space Fox 1.6 2008 a 2017 PSL34MP Tecfil
+  preco: 18.84
+  estoque: 50
+  estoqueReservado: 1
+  estoqueMinimo: 10
+  tipoPeca: FILTRO_OLEO
+
+  aplicacoes:
+    - modeloId: 4
+      anoInicio: 2008
+      anoFim: 2017

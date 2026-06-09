@@ -94,7 +94,7 @@ paths:
         - Clientes
       summary: Listar Clientes
       description: |
-        Endpoint para listar de cliente por clienteId
+        Endpoint para listagem paginada de clientes
       operationId: get/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -335,56 +335,669 @@ paths:
           integration.request.path.clienteId: "method.request.path.clienteId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-#  /hello:
-#    get:
-#      tags:
-#        - Hello World
-#      summary: Consulta Hello World
-#      description: |
-#        Endpoint para consultar hello world
-#      operationId: get/hello
-#      parameters:
-#        - $ref: "#/components/parameters/x_correlationid"
-#      responses:
-#        "200":
-#          description: Responde hello world
-#          content:
-#            application/json:
-#              schema:
-#                $ref: "#/components/schemas/HelloWorldResponse"
-#              examples:
-#                HelloWorldResponse:
-#                  $ref: "#/components/examples/HelloWorldResponse"
-#        "400":
-#          $ref: "#/components/responses/400"
-#        "401":
-#          $ref: "#/components/responses/401"
-#        "403":
-#          $ref: "#/components/responses/403"
-#        "405":
-#          $ref: "#/components/responses/405"
-#        "500":
-#          $ref: "#/components/responses/500"
-#        "503":
-#          $ref: "#/components/responses/503"
-##      security:
-##        - APIGatewaySTSAuthorizer:
-##            - none
-#      x-amazon-apigateway-integration:
-#        timeoutInMillis: 14000
-#        type: "http_proxy"
-#        httpMethod: "GET"
-##        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-#        uri: "http://${loadBalancerDnsMain}/hello"
-#        responses:
-#          default:
-#            statusCode: "503"
-#        passthroughBehavior: "when_no_match"
-#        connectionType: "VPC_LINK"
-#        connectionId: "${vpclink}"
-#        requestParameters:
-#          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-#      x-amazon-apigateway-request-validator: params-only
+  /clientes/documento/{documento}:
+    get:
+      tags:
+        - Clientes
+      summary: Consultar Cliente por documento
+      description: |
+        Endpoint para consulta de cliente por documento
+      operationId: get/clientes/documento/{documento}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: documento
+          in: path
+          description: Número do documento de identificação
+          required: true
+          schema:
+            type: string
+          example: "05583977000100"
+      responses:
+        "200":
+          description: Cliente consultado por documento
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindClienteResponse"
+              examples:
+                FindClienteResponse:
+                  $ref: "#/components/examples/FindClienteResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/clientes/documento/{documento}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.documento: "method.request.path.documento"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
+  /veiculos:
+    post:
+      tags:
+        - Veículos
+      summary: Criar Veículo
+      description: |
+        Endpoint para criar um veículo
+      operationId: post/veiculos
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVeiculoRequest"
+            examples:
+              CreateVeiculoRequest:
+                $ref: "#/components/examples/CreateVeiculoRequest"
+      responses:
+        "201":
+          description: Veículo criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateVeiculoResponse"
+              examples:
+                CreateClienteResponse:
+                  $ref: "#/components/examples/CreateVeiculoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/veiculos"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Veículos
+      summary: Listar Veículos
+      description: |
+        Endpoint para listagem paginada de Veículos
+      operationId: get/clientes
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Número de clientes por página
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Veículos listados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListVeiculosResponse"
+              examples:
+                ListVeiculosResponse:
+                  $ref: "#/components/examples/ListVeiculosResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/veiculos"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.querystring.page: "method.request.querystring.page"
+          integration.request.querystring.size: "method.request.querystring.size"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /veiculos/{veiculoId}:
+    put:
+      tags:
+        - Veículos
+      summary: Atualizar Veículo
+      description: |
+        Endpoint para atualizar um veículo
+      operationId: put/veiculos/{veiculoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: veiculoId
+          in: path
+          description: Identificador do veículo
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVeiculoRequest"
+            examples:
+              UpdateVeiculoRequest:
+                $ref: "#/components/examples/UpdateVeiculoRequest"
+      responses:
+        "200":
+          description: Veículo atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateVeiculoResponse"
+              examples:
+                UpdateVeiculoResponse:
+                  $ref: "#/components/examples/UpdateVeiculoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "PUT"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/veiculos/{veiculoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.veiculoId: "method.request.path.veiculoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Veículos
+      summary: Consultar Veículo
+      description: |
+        Endpoint para consulta de veículos por veiculoId
+      operationId: get/veiculos/{veiculoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: veiculoId
+          in: path
+          description: Identificador do veículo
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Veículo consultado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindVeiculoResponse"
+              examples:
+                FindVeiculoResponse:
+                  $ref: "#/components/examples/FindVeiculoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/veiculos/{veiculoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.veiculoId: "method.request.path.veiculoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    delete:
+      tags:
+        - Veículos
+      summary: Deletar Veículo
+      description: |
+        Endpoint para deleção de um veículo por veiculoId
+      operationId: delete/veiculos/{veiculoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: veiculoId
+          in: path
+          description: Identificador do veículo
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "DELETE"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/veiculos/{veiculoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.veiculoId: "method.request.path.veiculoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /veiculos/placa/{placa}:
+    get:
+      tags:
+        - Veículos
+      summary: Consultar Veículo por placa
+      description: |
+        Endpoint para consulta de veículos por placa
+      operationId: get /veiculos/placa/{placa}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: placa
+          in: path
+          description: Placa do veículo
+          required: true
+          schema:
+            type: string
+          example: ABC1234 ou ABC1D23
+      responses:
+        "200":
+          description: Veículo consultado por placa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindVeiculoResponse"
+              examples:
+                FindVeiculoResponse:
+                  $ref: "#/components/examples/FindVeiculoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/veiculos/placa/{placa}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.placa: "method.request.path.placa"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
+  /produtos/pecas:
+    post:
+      tags:
+        - Peças
+      summary: Criar Peça
+      description: |
+        Endpoint para criar uma peça
+      operationId: post/produtos/pecas
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePecaRequest"
+            examples:
+              CreatePecaRequest:
+                $ref: "#/components/examples/CreatePecaRequest"
+      responses:
+        "201":
+          description: Peça criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePecaResponse"
+              examples:
+                CreateClienteResponse:
+                  $ref: "#/components/examples/CreatePecaResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/pecas"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /produtos/pecas/{pecaId}:
+    put:
+      tags:
+        - Peças
+      summary: Atualizar Peça
+      description: |
+        Endpoint para atualizar uma peça
+      operationId: put/produtos/pecas/{pecaId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: pecaId
+          in: path
+          description: Identificador da peça
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePecaRequest"
+            examples:
+              UpdatePecaRequest:
+                $ref: "#/components/examples/UpdatePecaRequest"
+      responses:
+        "200":
+          description: Peça atualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateClienteResponse"
+              examples:
+                UpdateClienteResponse:
+                  $ref: "#/components/examples/UpdateClienteResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "PUT"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.pecaId: "method.request.path.pecaId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Peças
+      summary: Consultar Peça
+      description: |
+        Endpoint para consulta de peça por peçaId
+      operationId: get/produtos/pecas/{pecaId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: pecaId
+          in: path
+          description: Identificador da peça
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Peça consultada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindPecaResponse"
+              examples:
+                FindPecaResponse:
+                  $ref: "#/components/examples/FindPecaResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.pecaId: "method.request.path.pecaId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    delete:
+      tags:
+        - Peças
+      summary: Deletar Peça
+      description: |
+        Endpoint para deleção de peça por pecaId
+      operationId: delete/produtos/pecas/{pecaId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: pecaId
+          in: path
+          description: Identificador da peça
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "DELETE"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.pecaId: "method.request.path.pecaId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
 
 components:
   parameters:
@@ -403,8 +1016,28 @@ components:
       $ref: ./schemas/UpdateClienteResponse.yaml
     ListClientesResponse:
       $ref: ./schemas/ListClientesResponse.yaml
-#    HelloWorldResponse:
-#      $ref: ./schemas/HelloWorldResponse.yaml
+    FindVeiculoResponse:
+      $ref: ./schemas/FindVeiculoResponse.yaml
+    CreateVeiculoRequest:
+      $ref: ./schemas/CreateVeiculoRequest.yaml
+    CreateVeiculoResponse:
+      $ref: ./schemas/CreateVeiculoResponse.yaml
+    UpdateVeiculoRequest:
+      $ref: ./schemas/UpdateVeiculoRequest.yaml
+    UpdateVeiculoResponse:
+      $ref: ./schemas/UpdateVeiculoResponse.yaml
+    ListVeiculosResponse:
+      $ref: ./schemas/ListVeiculosResponse.yaml
+    FindPecaResponse:
+      $ref: ./schemas/FindPecaResponse.yaml
+    CreatePecaRequest:
+      $ref: ./schemas/CreatePecaRequest.yaml
+    CreatePecaResponse:
+      $ref: ./schemas/CreatePecaResponse.yaml
+    UpdatePecaRequest:
+      $ref: ./schemas/UpdatePecaRequest.yaml
+    UpdatePecaResponse:
+      $ref: ./schemas/UpdatePecaResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -418,9 +1051,30 @@ components:
       $ref: ./examples/200UpdateClienteResponse.yaml
     ListClientesResponse:
       $ref: ./examples/200ListClienteResponse.yaml
-      yaml:
-  #    HelloWorldResponse:
-#      $ref: ./examples/200HelloWorldResponse.yaml
+    FindVeiculoResponse:
+      $ref: ./examples/200FindVeiculoResponse.yaml
+    CreateVeiculoRequest:
+      $ref: ./examples/requests/CreateVeiculoRequest.yaml
+    CreateVeiculoResponse:
+      $ref: ./examples/201CreateVeiculoResponse.yaml
+    UpdateVeiculoRequest:
+      $ref: ./examples/requests/UpdateVeiculoRequest.yaml
+    UpdateVeiculoResponse:
+      $ref: ./examples/200UpdateVeiculoResponse.yaml
+    ListVeiculosResponse:
+      $ref: ./examples/200ListVeiculosResponse.yaml
+
+    FindPecaResponse:
+      $ref: ./examples/200FindPecaResponse.yaml
+    CreatePecaRequest:
+      $ref: ./examples/requests/CreatePecaRequest.yaml
+    CreatePecaResponse:
+      $ref: ./examples/201CreatePecaResponse.yaml
+    UpdatePecaRequest:
+      $ref: ./examples/requests/UpdatePecaRequest.yaml
+    UpdatePecaResponse:
+      $ref: ./examples/200UpdatePecaResponse.yaml
+
   responses:
     '204':
       $ref: ./responses/204.yaml
