@@ -761,6 +761,248 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
+  /produtos/pecas:
+    post:
+      tags:
+        - Produtos
+        - Peças
+      summary: Criar Peça
+      description: |
+        Endpoint para criar uma peça
+      operationId: post/produtos/pecas
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePecaRequest"
+            examples:
+              CreatePecaRequest:
+                $ref: "#/components/examples/CreatePecaRequest"
+      responses:
+        "201":
+          description: Peça criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePecaResponse"
+              examples:
+                CreateClienteResponse:
+                  $ref: "#/components/examples/CreatePecaResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/pecas"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /produtos/pecas/{pecaId}:
+    put:
+      tags:
+        - Produtos
+        - Peças
+      summary: Atualizar Peça
+      description: |
+        Endpoint para atualizar uma peça
+      operationId: put/produtos/pecas/{pecaId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: pecaId
+          in: path
+          description: Identificador da peça
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePecaRequest"
+            examples:
+              UpdatePecaRequest:
+                $ref: "#/components/examples/UpdatePecaRequest"
+      responses:
+        "200":
+          description: Peça atualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateClienteResponse"
+              examples:
+                UpdateClienteResponse:
+                  $ref: "#/components/examples/UpdateClienteResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "PUT"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.pecaId: "method.request.path.pecaId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Produtos
+        - Peças
+      summary: Consultar Peça
+      description: |
+        Endpoint para consulta de peça por peçaId
+      operationId: get/produtos/pecas/{pecaId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: pecaId
+          in: path
+          description: Identificador da peça
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Peça consultada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindPecaResponse"
+              examples:
+                FindPecaResponse:
+                  $ref: "#/components/examples/FindPecaResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.pecaId: "method.request.path.pecaId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    delete:
+      tags:
+        - Produtos
+        - Peças
+      summary: Deletar Peça
+      description: |
+        Endpoint para deleção de peça por pecaId
+      operationId: delete/produtos/pecas/{pecaId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: pecaId
+          in: path
+          description: Identificador da peça
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "DELETE"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.pecaId: "method.request.path.pecaId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
 components:
   parameters:
     x_correlationid:
@@ -790,6 +1032,16 @@ components:
       $ref: ./schemas/UpdateVeiculoResponse.yaml
     ListVeiculosResponse:
       $ref: ./schemas/ListVeiculosResponse.yaml
+    FindPecaResponse:
+      $ref: ./schemas/FindPecaResponse.yaml
+    CreatePecaRequest:
+      $ref: ./schemas/CreatePecaRequest.yaml
+    CreatePecaResponse:
+      $ref: ./schemas/CreatePecaResponse.yaml
+    UpdatePecaRequest:
+      $ref: ./schemas/UpdatePecaRequest.yaml
+    UpdatePecaResponse:
+      $ref: ./schemas/UpdatePecaResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -815,6 +1067,18 @@ components:
       $ref: ./examples/200UpdateVeiculoResponse.yaml
     ListVeiculosResponse:
       $ref: ./examples/200ListVeiculosResponse.yaml
+
+    FindPecaResponse:
+      $ref: ./examples/200FindPecaResponse.yaml
+    CreatePecaRequest:
+      $ref: ./examples/requests/CreatePecaRequest.yaml
+    CreatePecaResponse:
+      $ref: ./examples/201CreatePecaResponse.yaml
+    UpdatePecaRequest:
+      $ref: ./examples/requests/UpdatePecaRequest.yaml
+    UpdatePecaResponse:
+      $ref: ./examples/200UpdatePecaResponse.yaml
+
   responses:
     '204':
       $ref: ./responses/204.yaml
