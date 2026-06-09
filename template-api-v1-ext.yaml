@@ -764,7 +764,6 @@ paths:
   /produtos/pecas:
     post:
       tags:
-        - Produtos
         - Peças
       summary: Criar Peça
       description: |
@@ -823,7 +822,6 @@ paths:
   /produtos/pecas/{pecaId}:
     put:
       tags:
-        - Produtos
         - Peças
       summary: Atualizar Peça
       description: |
@@ -891,7 +889,6 @@ paths:
       x-amazon-apigateway-request-validator: params-only
     get:
       tags:
-        - Produtos
         - Peças
       summary: Consultar Peça
       description: |
@@ -951,7 +948,6 @@ paths:
       x-amazon-apigateway-request-validator: params-only
     delete:
       tags:
-        - Produtos
         - Peças
       summary: Deletar Peça
       description: |
