@@ -1,0 +1,48 @@
+type: object
+properties:
+  sku:
+    type: string
+    description: SKU da peça
+
+  ean:
+    type: string
+    description: Código EAN da peça
+
+  nome:
+    type: string
+    description: Nome da peça
+
+  preco:
+    type: number
+    format: decimal
+    description: Preço unitário da peça
+
+  estoque:
+    type: integer
+    description: Quantidade disponível em estoque
+
+  estoqueMinimo:
+    type: integer
+    description: Quantidade mínima recomendada para reposição
+
+  tipoPeca:
+    $ref: './TipoPeca.yaml'
+
+  aplicacoes:
+    type: array
+    description: Lista de aplicações compatíveis da peça
+    items:
+      type: object
+      properties:
+        modeloId:
+          type: integer
+          format: int64
+          description: Identificador do modelo compatível
+
+        anoInicio:
+          type: integer
+          description: Ano inicial de compatibilidade
+
+        anoFim:
+          type: integer
+          description: Ano final de compatibilidade

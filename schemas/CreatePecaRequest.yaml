@@ -1,0 +1,66 @@
+type: object
+properties:
+  sku:
+    type: string
+    description: SKU (Stock Keeping Unit) utilizado para identificação interna da peça
+
+  ean:
+    type: string
+    description: Código EAN (European Article Number) da peça
+
+  nome:
+    type: string
+    description: Nome ou descrição da peça
+
+  preco:
+    type: number
+    format: decimal
+    description: Preço unitário da peça
+
+  estoque:
+    type: integer
+    minimum: 0
+    description: Quantidade disponível em estoque
+
+  estoqueMinimo:
+    type: integer
+    minimum: 0
+    description: Quantidade mínima recomendada para reposição de estoque
+
+  tipoPeca:
+    $ref: './TipoPeca.yaml'
+
+  aplicacoes:
+    type: array
+    description: Lista de veículos/modelos compatíveis com a peça
+    items:
+      type: object
+      properties:
+        modeloId:
+          type: integer
+          format: int64
+          description: Identificador do modelo compatível
+
+        anoInicio:
+          type: integer
+          minimum: 1000
+          maximum: 9999
+          description: Ano inicial de compatibilidade
+
+        anoFim:
+          type: integer
+          minimum: 1000
+          maximum: 9999
+          description: Ano final de compatibilidade
+      required:
+        - modeloId
+        - anoInicio
+        - anoFim
+
+required:
+  - sku
+  - ean
+  - nome
+  - preco
+  - tipoPeca
+  - aplicacoes
