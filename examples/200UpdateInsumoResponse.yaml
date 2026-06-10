@@ -1,0 +1,17 @@
+summary: Exemplo de resposta para atualização de um insumo
+value:
+  sku: OLEO_MOTOR_5W30_1L
+  ean: "7891234567890"
+  nome: Óleo de Motor 5W-30 Sintético 1L
+  preco: 49.90
+  estoque: 100
+  estoqueMinimo: 10
+  tipoInsumo: OLEO_MOTOR
+  quantidadeEmbalagem: 1.0
+  unidadeDeMedida: L
+
+  aplicacoes:
+    - modeloId: 1
+      anoInicio: 2015
+      anoFim: 2024
+      quantidade: 4
