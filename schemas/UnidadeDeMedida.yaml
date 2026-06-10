@@ -1,0 +1,8 @@
+type: string
+description: Unidade de medida do insumo
+enum:
+  - UN
+  - L
+  - ML
+  - G
+  - KG
