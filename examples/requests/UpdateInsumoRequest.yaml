@@ -1,0 +1,9 @@
+summary: Exemplo de request para atualização de um insumo
+value:
+  preco: 49.90
+
+  aplicacoes:
+    - modeloId: 1
+      anoInicio: 2015
+      anoFim: 2024
+      quantidade: 4

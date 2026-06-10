@@ -1,0 +1,80 @@
+type: object
+properties:
+  sku:
+    type: string
+    description: SKU (Stock Keeping Unit) utilizado para identificação interna do insumo
+
+  ean:
+    type: string
+    description: Código EAN (European Article Number) do insumo
+
+  nome:
+    type: string
+    description: Nome ou descrição do insumo
+
+  preco:
+    type: number
+    format: decimal
+    description: Preço unitário do insumo
+
+  estoque:
+    type: integer
+    minimum: 0
+    description: Quantidade disponível em estoque
+
+  estoqueMinimo:
+    type: integer
+    minimum: 0
+    description: Quantidade mínima recomendada para reposição de estoque
+
+  tipoInsumo:
+    $ref: './TipoInsumo.yaml'
+
+  quantidadeEmbalagem:
+    type: number
+    format: decimal
+    description: Quantidade por embalagem (ex. litros, gramas)
+
+  unidadeDeMedida:
+    $ref: './UnidadeDeMedida.yaml'
+
+  aplicacoes:
+    type: array
+    description: Lista de veículos/modelos compatíveis com o insumo
+    items:
+      type: object
+      properties:
+        modeloId:
+          type: integer
+          format: int64
+          description: Identificador do modelo compatível
+
+        anoInicio:
+          type: integer
+          minimum: 1000
+          maximum: 9999
+          description: Ano inicial de compatibilidade
+
+        anoFim:
+          type: integer
+          minimum: 1000
+          maximum: 9999
+          description: Ano final de compatibilidade
+
+        quantidade:
+          type: integer
+          minimum: 0
+          description: Quantidade do insumo utilizada na aplicação
+      required:
+        - modeloId
+        - anoInicio
+        - anoFim
+        - quantidade
+
+required:
+  - sku
+  - ean
+  - nome
+  - preco
+  - tipoInsumo
+  - aplicacoes
