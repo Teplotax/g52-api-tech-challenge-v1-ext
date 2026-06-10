@@ -1,0 +1,64 @@
+type: object
+properties:
+  sku:
+    type: string
+    description: SKU do insumo
+
+  ean:
+    type: string
+    description: Código EAN do insumo
+
+  nome:
+    type: string
+    description: Nome do insumo
+
+  preco:
+    type: number
+    format: decimal
+    description: Preço unitário do insumo
+
+  estoque:
+    type: integer
+    description: Quantidade disponível em estoque
+
+  estoqueReservado:
+    type: integer
+    description: Quantidade reservada para ordens de serviço ou vendas
+
+  estoqueMinimo:
+    type: integer
+    description: Quantidade mínima recomendada para reposição
+
+  tipoInsumo:
+    $ref: './TipoInsumo.yaml'
+
+  quantidadeEmbalagem:
+    type: number
+    format: decimal
+    description: Quantidade por embalagem
+
+  unidadeDeMedida:
+    $ref: './UnidadeDeMedida.yaml'
+
+  aplicacoes:
+    type: array
+    description: Lista de aplicações compatíveis do insumo
+    items:
+      type: object
+      properties:
+        modeloId:
+          type: integer
+          format: int64
+          description: Identificador do modelo compatível
+
+        anoInicio:
+          type: integer
+          description: Ano inicial de compatibilidade
+
+        anoFim:
+          type: integer
+          description: Ano final de compatibilidade
+
+        quantidade:
+          type: integer
+          description: Quantidade do insumo utilizada na aplicação

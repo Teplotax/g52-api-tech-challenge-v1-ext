@@ -999,6 +999,244 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
+  /produtos/insumos:
+    post:
+      tags:
+        - Insumos
+      summary: Criar Insumo
+      description: |
+        Endpoint para criar um insumo
+      operationId: post/produtos/insumos
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInsumoRequest"
+            examples:
+              CreateInsumoRequest:
+                $ref: "#/components/examples/CreateInsumoRequest"
+      responses:
+        "201":
+          description: Insumo criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateInsumoResponse"
+              examples:
+                CreateInsumoResponse:
+                  $ref: "#/components/examples/CreateInsumoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/insumos"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /produtos/insumos/{insumoId}:
+    put:
+      tags:
+        - Insumos
+      summary: Atualizar Insumo
+      description: |
+        Endpoint para atualizar um insumo
+      operationId: put/produtos/insumos/{insumoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: insumoId
+          in: path
+          description: Identificador do insumo
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateInsumoRequest"
+            examples:
+              UpdateInsumoRequest:
+                $ref: "#/components/examples/UpdateInsumoRequest"
+      responses:
+        "200":
+          description: Insumo atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateInsumoResponse"
+              examples:
+                UpdateInsumoResponse:
+                  $ref: "#/components/examples/UpdateInsumoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "PUT"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/insumos/{insumoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.insumoId: "method.request.path.insumoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Insumos
+      summary: Consultar Insumo
+      description: |
+        Endpoint para consulta de insumo por insumoId
+      operationId: get/produtos/insumos/{insumoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: insumoId
+          in: path
+          description: Identificador do insumo
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Insumo consultado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindInsumoResponse"
+              examples:
+                FindInsumoResponse:
+                  $ref: "#/components/examples/FindInsumoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/insumos/{insumoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.insumoId: "method.request.path.insumoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    delete:
+      tags:
+        - Insumos
+      summary: Deletar Insumo
+      description: |
+        Endpoint para deleção de insumo por insumoId
+      operationId: delete/produtos/insumos/{insumoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: insumoId
+          in: path
+          description: Identificador do insumo
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "DELETE"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/produtos/insumos/{insumoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.insumoId: "method.request.path.insumoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
 components:
   parameters:
     x_correlationid:
@@ -1038,6 +1276,16 @@ components:
       $ref: ./schemas/UpdatePecaRequest.yaml
     UpdatePecaResponse:
       $ref: ./schemas/UpdatePecaResponse.yaml
+    FindInsumoResponse:
+      $ref: ./schemas/FindInsumoResponse.yaml
+    CreateInsumoRequest:
+      $ref: ./schemas/CreateInsumoRequest.yaml
+    CreateInsumoResponse:
+      $ref: ./schemas/CreateInsumoResponse.yaml
+    UpdateInsumoRequest:
+      $ref: ./schemas/UpdateInsumoRequest.yaml
+    UpdateInsumoResponse:
+      $ref: ./schemas/UpdateInsumoResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -1074,6 +1322,17 @@ components:
       $ref: ./examples/requests/UpdatePecaRequest.yaml
     UpdatePecaResponse:
       $ref: ./examples/200UpdatePecaResponse.yaml
+
+    FindInsumoResponse:
+      $ref: ./examples/200FindInsumoResponse.yaml
+    CreateInsumoRequest:
+      $ref: ./examples/requests/CreateInsumoRequest.yaml
+    CreateInsumoResponse:
+      $ref: ./examples/201CreateInsumoResponse.yaml
+    UpdateInsumoRequest:
+      $ref: ./examples/requests/UpdateInsumoRequest.yaml
+    UpdateInsumoResponse:
+      $ref: ./examples/200UpdateInsumoResponse.yaml
 
   responses:
     '204':
