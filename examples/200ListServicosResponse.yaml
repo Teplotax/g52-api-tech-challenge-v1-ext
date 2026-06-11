@@ -1,0 +1,29 @@
+value:
+  content:
+    - id: 1
+      nome: Troca de óleo e filtros
+      horasTecnicas: 1.5
+      insumos:
+        - OLEO_MOTOR
+        - DESENGRAXANTE
+      pecas:
+        - id: 1
+          tipoPeca: FILTRO_OLEO
+          quantidade: 1
+        - id: 2
+          tipoPeca: FILTRO_AR
+          quantidade: 1
+    - id: 2
+      nome: Revisão de freios
+      horasTecnicas: 3.0
+      insumos:
+        - FLUIDO_FREIO
+      pecas:
+        - tipoPeca: PASTILHA_FREIO
+          quantidade: 4
+        - tipoPeca: DISCO_FREIO
+          quantidade: 2
+  page: 0
+  size: 20
+  totalElements: 2
+  totalPages: 1
