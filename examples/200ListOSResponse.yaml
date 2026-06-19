@@ -1,0 +1,28 @@
+value:
+  content:
+    - id: 1
+      status: AGUARDANDO_APROVACAO
+      clienteId: 1
+      clienteNomeSocial: João Silva
+      clienteDocumento: 123.456.789-00
+      veiculoId: 1
+      veiculoPlaca: ABC1D23
+      complexidade: MEDIA
+      sintomas: Barulho ao frear e vibração no volante
+      tagChave: OS-2024-001
+      precoTotal: 685.00
+    - id: 2
+      status: RECEBIDA
+      clienteId: 2
+      clienteNomeSocial: Maria Souza
+      clienteDocumento: 987.654.321-00
+      veiculoId: 3
+      veiculoPlaca: XYZ9W87
+      complexidade: null
+      sintomas: Carro não liga
+      tagChave: OS-2024-002
+      precoTotal: 150.00
+  page: 0
+  size: 20
+  totalElements: 2
+  totalPages: 1
