@@ -43,6 +43,10 @@ properties:
   tagChave:
     type: string
     description: Tag chave da OS
+  criadaEm:
+    type: string
+    format: date-time
+    description: Data e hora de criação da OS
   precoTotal:
     type: number
     format: decimal

@@ -1639,18 +1639,18 @@ paths:
               - DEVOLVIDO
         - name: dataInicio
           in: query
-          description: Data/hora de início do range (ISO 8601)
+          description: Data de início do range (ex. 2026-06-19)
           required: false
           schema:
             type: string
-            format: date-time
+            format: date
         - name: dataFim
           in: query
-          description: Data/hora de fim do range (ISO 8601)
+          description: Data de fim do range (ex. 2026-06-19)
           required: false
           schema:
             type: string
-            format: date-time
+            format: date
         - name: page
           in: query
           description: Número da página
