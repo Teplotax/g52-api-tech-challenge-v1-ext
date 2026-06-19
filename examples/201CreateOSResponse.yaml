@@ -1,0 +1,40 @@
+value:
+  status: RECEBIDA
+  sintomas: Barulho ao frear e vibração no volante em altas velocidades
+  clienteId: 1
+  clienteNomeSocial: João Silva
+  veiculoId: 1
+  veiculoPlaca: ABC1D23
+  tagChave: OS-2024-001
+  precoTotal: 485.00
+  servicosDesejados:
+    - servico: Revisão de freios
+      precoTotal: 320.00
+      precoHorasTecnicas: 120.00
+      pecas:
+        - peca: Pastilha de freio dianteira
+          ean: 7891234560001
+          quantidade: 4
+          precoUnitario: 35.00
+          precoTotal: 140.00
+        - peca: Disco de freio dianteiro
+          ean: 7891234560002
+          quantidade: 2
+          precoUnitario: 30.00
+          precoTotal: 60.00
+      insumos:
+        - insumo: Fluido de freio DOT 4
+          ean: 7891234560010
+          quantidade: 1
+          precoUnitario: 25.00
+          precoTotal: 25.00
+    - servico: Balanceamento de rodas
+      precoTotal: 165.00
+      precoHorasTecnicas: 80.00
+      pecas: []
+      insumos:
+        - insumo: Massa de balanceamento
+          ean: 7891234560011
+          quantidade: 2
+          precoUnitario: 12.50
+          precoTotal: 25.00

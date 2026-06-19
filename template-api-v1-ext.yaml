@@ -1237,6 +1237,544 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
+  /servicos:
+    post:
+      tags:
+        - Serviços
+      summary: Criar Serviço
+      description: |
+        Endpoint para criar um serviço
+      operationId: post/servicos
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateServicoRequest"
+            examples:
+              CreateServicoRequest:
+                $ref: "#/components/examples/CreateServicoRequest"
+      responses:
+        "201":
+          description: Serviço criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateServicoResponse"
+              examples:
+                CreateServicoResponse:
+                  $ref: "#/components/examples/CreateServicoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/servicos"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Serviços
+      summary: Listar Serviços
+      description: |
+        Endpoint para listagem paginada de serviços
+      operationId: get/servicos
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Número de serviços por página
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Serviços listados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListServicosResponse"
+              examples:
+                ListServicosResponse:
+                  $ref: "#/components/examples/ListServicosResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/servicos"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.querystring.page: "method.request.querystring.page"
+          integration.request.querystring.size: "method.request.querystring.size"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /servicos/{servicoId}:
+    put:
+      tags:
+        - Serviços
+      summary: Atualizar Serviço
+      description: |
+        Endpoint para atualizar um serviço
+      operationId: put/servicos/{servicoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: servicoId
+          in: path
+          description: Identificador do serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateServicoRequest"
+            examples:
+              UpdateServicoRequest:
+                $ref: "#/components/examples/UpdateServicoRequest"
+      responses:
+        "200":
+          description: Serviço atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateServicoResponse"
+              examples:
+                UpdateServicoResponse:
+                  $ref: "#/components/examples/UpdateServicoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "PUT"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/servicos/{servicoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.servicoId: "method.request.path.servicoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Serviços
+      summary: Consultar Serviço
+      description: |
+        Endpoint para consulta de serviço por servicoId
+      operationId: get/servicos/{servicoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: servicoId
+          in: path
+          description: Identificador do serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Serviço consultado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindServicoResponse"
+              examples:
+                FindServicoResponse:
+                  $ref: "#/components/examples/FindServicoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/servicos/{servicoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.servicoId: "method.request.path.servicoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    delete:
+      tags:
+        - Serviços
+      summary: Deletar Serviço
+      description: |
+        Endpoint para deleção de serviço por servicoId
+      operationId: delete/servicos/{servicoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: servicoId
+          in: path
+          description: Identificador do serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "204":
+          $ref: "#/components/responses/204"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "DELETE"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/servicos/{servicoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.servicoId: "method.request.path.servicoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
+  /ordemsDeServico:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Criar Ordem de Serviço
+      description: |
+        Endpoint para criar uma ordem de serviço
+      operationId: post/ordemsDeServico
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOSRequest"
+            examples:
+              CreateOSRequest:
+                $ref: "#/components/examples/CreateOSRequest"
+      responses:
+        "201":
+          description: Ordem de Serviço criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOSResponse"
+              examples:
+                CreateOSResponse:
+                  $ref: "#/components/examples/CreateOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordemsDeServico"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Ordens de Serviço
+      summary: Listar Ordens de Serviço
+      description: |
+        Endpoint para listagem paginada de ordens de serviço com filtros opcionais
+      operationId: get/ordemsDeServico
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: placa
+          in: query
+          description: Placa do veículo para filtrar
+          required: false
+          schema:
+            type: string
+        - name: documentoCliente
+          in: query
+          description: Documento do cliente para filtrar
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Status da OS para filtrar
+          required: false
+          schema:
+            type: string
+            enum:
+              - RECEBIDA
+              - EM_DIAGNOSTICO
+              - AGUARDANDO_APROVACAO
+              - APROVADA
+              - EM_EXECUCAO
+              - FINALIZADA
+              - ENTREGUE
+              - CANCELADA
+              - DEVOLVIDO
+        - name: dataInicio
+          in: query
+          description: Data/hora de início do range (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: dataFim
+          in: query
+          description: Data/hora de fim do range (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Número de ordens de serviço por página
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Ordens de Serviço listadas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListOSResponse"
+              examples:
+                ListOSResponse:
+                  $ref: "#/components/examples/ListOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordemsDeServico"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.querystring.placa: "method.request.querystring.placa"
+          integration.request.querystring.documentoCliente: "method.request.querystring.documentoCliente"
+          integration.request.querystring.status: "method.request.querystring.status"
+          integration.request.querystring.dataInicio: "method.request.querystring.dataInicio"
+          integration.request.querystring.dataFim: "method.request.querystring.dataFim"
+          integration.request.querystring.page: "method.request.querystring.page"
+          integration.request.querystring.size: "method.request.querystring.size"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordemsDeServico/{ordemDeServicoId}:
+    get:
+      tags:
+        - Ordens de Serviço
+      summary: Consultar Ordem de Serviço
+      description: |
+        Endpoint para consulta de ordem de serviço por ordemDeServicoId
+      operationId: get/ordemsDeServico/{ordemDeServicoId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: ordemDeServicoId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Ordem de Serviço consultada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindOSResponse"
+              examples:
+                FindOSResponse:
+                  $ref: "#/components/examples/FindOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordemsDeServico/{ordemDeServicoId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
 components:
   parameters:
     x_correlationid:
@@ -1286,6 +1824,26 @@ components:
       $ref: ./schemas/UpdateInsumoRequest.yaml
     UpdateInsumoResponse:
       $ref: ./schemas/UpdateInsumoResponse.yaml
+    CreateServicoRequest:
+      $ref: ./schemas/CreateServicoRequest.yaml
+    CreateServicoResponse:
+      $ref: ./schemas/CreateServicoResponse.yaml
+    UpdateServicoRequest:
+      $ref: ./schemas/UpdateServicoRequest.yaml
+    UpdateServicoResponse:
+      $ref: ./schemas/UpdateServicoResponse.yaml
+    FindServicoResponse:
+      $ref: ./schemas/FindServicoResponse.yaml
+    ListServicosResponse:
+      $ref: ./schemas/ListServicosResponse.yaml
+    CreateOSRequest:
+      $ref: ./schemas/CreateOSRequest.yaml
+    CreateOSResponse:
+      $ref: ./schemas/CreateOSResponse.yaml
+    FindOSResponse:
+      $ref: ./schemas/FindOSResponse.yaml
+    ListOSResponse:
+      $ref: ./schemas/ListOSResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -1298,7 +1856,7 @@ components:
     UpdateClienteResponse:
       $ref: ./examples/200UpdateClienteResponse.yaml
     ListClientesResponse:
-      $ref: ./examples/200ListClienteResponse.yaml
+      $ref: ./examples/200ListClientesResponse.yaml
     FindVeiculoResponse:
       $ref: ./examples/200FindVeiculoResponse.yaml
     CreateVeiculoRequest:
@@ -1333,6 +1891,28 @@ components:
       $ref: ./examples/requests/UpdateInsumoRequest.yaml
     UpdateInsumoResponse:
       $ref: ./examples/200UpdateInsumoResponse.yaml
+
+    FindServicoResponse:
+      $ref: ./examples/200FindServicoResponse.yaml
+    CreateServicoRequest:
+      $ref: ./examples/requests/CreateServicoRequest.yaml
+    CreateServicoResponse:
+      $ref: ./examples/201CreateServicoResponse.yaml
+    UpdateServicoRequest:
+      $ref: ./examples/requests/UpdateServicoRequest.yaml
+    UpdateServicoResponse:
+      $ref: ./examples/200UpdateServicoResponse.yaml
+    ListServicosResponse:
+      $ref: ./examples/200ListServicosResponse.yaml
+
+    CreateOSRequest:
+      $ref: ./examples/requests/CreateOSRequest.yaml
+    CreateOSResponse:
+      $ref: ./examples/201CreateOSResponse.yaml
+    FindOSResponse:
+      $ref: ./examples/200FindOSResponse.yaml
+    ListOSResponse:
+      $ref: ./examples/200ListOSResponse.yaml
 
   responses:
     '204':

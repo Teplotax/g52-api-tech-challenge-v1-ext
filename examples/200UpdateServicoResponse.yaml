@@ -1,0 +1,10 @@
+value:
+  nome: Troca de óleo e filtros
+  horasTecnicas: 0.5
+  insumos:
+    - OLEO_MOTOR
+  pecas:
+    - tipoPeca: FILTRO_OLEO
+      quantidade: 1
+    - tipoPeca: FILTRO_AR
+      quantidade: 1
