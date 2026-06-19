@@ -6,6 +6,7 @@ value:
   veiculoId: 1
   veiculoPlaca: ABC1D23
   tagChave: OS-2024-001
+  criadaEm: "2024-06-01T10:00:00"
   precoTotal: 485.00
   servicosDesejados:
     - servico: Revisão de freios

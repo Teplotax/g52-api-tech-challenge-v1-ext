@@ -10,6 +10,7 @@ value:
       complexidade: MEDIA
       sintomas: Barulho ao frear e vibração no volante
       tagChave: OS-2024-001
+      criadaEm: "2024-06-01T10:00:00"
       precoTotal: 685.00
     - id: 2
       status: RECEBIDA
@@ -21,6 +22,7 @@ value:
       complexidade: null
       sintomas: Carro não liga
       tagChave: OS-2024-002
+      criadaEm: "2024-06-02T09:15:00"
       precoTotal: 150.00
   page: 0
   size: 20
