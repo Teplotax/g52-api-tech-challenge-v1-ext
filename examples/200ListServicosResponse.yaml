@@ -7,11 +7,9 @@ value:
         - OLEO_MOTOR
         - DESENGRAXANTE
       pecas:
-        - id: 1
-          tipoPeca: FILTRO_OLEO
+        - tipoPeca: FILTRO_OLEO
           quantidade: 1
-        - id: 2
-          tipoPeca: FILTRO_AR
+        - tipoPeca: FILTRO_AR
           quantidade: 1
     - id: 2
       nome: Revisão de freios
