@@ -1,0 +1,46 @@
+type: object
+properties:
+  content:
+    type: array
+    description: Lista de serviços da página atual
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Identificador do serviço
+        nome:
+          type: string
+          description: Nome do serviço
+        horasTecnicas:
+          type: number
+          format: decimal
+          description: Quantidade de horas técnicas do serviço
+        insumos:
+          type: array
+          items:
+            type: string
+            description: Tipo do insumo (enum TipoInsumo)
+        pecas:
+          type: array
+          items:
+            type: object
+            properties:
+              tipoPeca:
+                type: string
+              quantidade:
+                type: integer
+  page:
+    type: integer
+    description: Número da página atual
+  size:
+    type: integer
+    description: Tamanho da página
+  totalElements:
+    type: integer
+    format: int64
+    description: Total de elementos
+  totalPages:
+    type: integer
+    description: Total de páginas

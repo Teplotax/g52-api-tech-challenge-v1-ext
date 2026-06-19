@@ -1,0 +1,8 @@
+value:
+  clienteId: 1
+  veiculoId: 1
+  sintomas: Barulho ao frear e vibração no volante em altas velocidades
+  tagChave: OS-2024-001
+  servicosDesejados:
+    - 1
+    - 2

@@ -1,0 +1,34 @@
+type: object
+properties:
+  nome:
+    type: string
+    description: Nome do serviço
+
+  horasTecnicas:
+    type: number
+    format: decimal
+    minimum: 0
+    description: Quantidade de horas técnicas necessárias para execução do serviço
+
+  insumos:
+    type: array
+    description: Lista de tipos de insumos necessários para o serviço
+    items:
+      type: string
+      description: Tipo do insumo (enum TipoInsumo)
+
+  pecas:
+    type: array
+    description: Lista de tipos de peças utilizadas no serviço
+    items:
+      type: object
+      properties:
+        tipoPeca:
+          type: string
+          description: Tipo da peça (enum TipoPeca)
+        quantidade:
+          type: integer
+          minimum: 0
+          description: Quantidade necessária da peça
+      required:
+        - tipoPeca

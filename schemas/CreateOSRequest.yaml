@@ -1,0 +1,26 @@
+type: object
+required:
+  - clienteId
+  - veiculoId
+  - servicosDesejados
+properties:
+  clienteId:
+    type: integer
+    format: int64
+    description: Identificador do cliente
+  veiculoId:
+    type: integer
+    format: int64
+    description: Identificador do veículo
+  sintomas:
+    type: string
+    description: Descrição dos sintomas relatados
+  tagChave:
+    type: string
+    description: Tag chave da OS
+  servicosDesejados:
+    type: array
+    description: Lista de IDs dos serviços desejados
+    items:
+      type: integer
+      format: int64
