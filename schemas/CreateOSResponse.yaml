@@ -1,0 +1,100 @@
+type: object
+properties:
+  status:
+    type: string
+    description: Status da OS
+    enum:
+      - RECEBIDA
+      - EM_DIAGNOSTICO
+      - AGUARDANDO_APROVACAO
+      - APROVADA
+      - EM_EXECUCAO
+      - FINALIZADA
+      - ENTREGUE
+      - CANCELADA
+      - DEVOLVIDO
+  sintomas:
+    type: string
+    description: Descrição dos sintomas relatados
+  clienteId:
+    type: integer
+    format: int64
+    description: Identificador do cliente
+  clienteNomeSocial:
+    type: string
+    description: Nome social do cliente
+  veiculoId:
+    type: integer
+    format: int64
+    description: Identificador do veículo
+  veiculoPlaca:
+    type: string
+    description: Placa do veículo
+  tagChave:
+    type: string
+    description: Tag chave da OS
+  precoTotal:
+    type: number
+    format: decimal
+    description: Preço total dos serviços desejados
+  servicosDesejados:
+    type: array
+    description: Lista de serviços desejados com preços calculados
+    items:
+      type: object
+      properties:
+        servico:
+          type: string
+          description: Nome do serviço
+        precoTotal:
+          type: number
+          format: decimal
+          description: Preço total do serviço
+        precoHorasTecnicas:
+          type: number
+          format: decimal
+          description: Preço das horas técnicas
+        pecas:
+          type: array
+          items:
+            type: object
+            properties:
+              peca:
+                type: string
+                description: Nome da peça
+              ean:
+                type: string
+                description: EAN da peça
+              quantidade:
+                type: integer
+                description: Quantidade utilizada
+              precoUnitario:
+                type: number
+                format: decimal
+                description: Preço unitário da peça
+              precoTotal:
+                type: number
+                format: decimal
+                description: Preço total das peças
+        insumos:
+          type: array
+          items:
+            type: object
+            properties:
+              insumo:
+                type: string
+                description: Nome do insumo
+              ean:
+                type: string
+                description: EAN do insumo
+              quantidade:
+                type: integer
+                description: Quantidade utilizada
+              precoUnitario:
+                type: number
+                format: decimal
+                description: Preço unitário do insumo
+              precoTotal:
+                type: number
+                format: decimal
+                description: Preço total dos insumos
