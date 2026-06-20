@@ -1542,14 +1542,14 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
-  /ordemsDeServico:
+  /ordensDeServico:
     post:
       tags:
         - Ordens de Serviço
       summary: Criar Ordem de Serviço
       description: |
         Endpoint para criar uma ordem de serviço
-      operationId: post/ordemsDeServico
+      operationId: post/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
       requestBody:
@@ -1590,7 +1590,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordemsDeServico"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico"
         responses:
           default:
             statusCode: "503"
@@ -1606,7 +1606,7 @@ paths:
       summary: Listar Ordens de Serviço
       description: |
         Endpoint para listagem paginada de ordens de serviço com filtros opcionais
-      operationId: get/ordemsDeServico
+      operationId: get/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
         - name: placa
@@ -1697,7 +1697,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordemsDeServico"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico"
         responses:
           default:
             statusCode: "503"
@@ -1714,14 +1714,14 @@ paths:
           integration.request.querystring.size: "method.request.querystring.size"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-  /ordemsDeServico/{ordemDeServicoId}:
+  /ordensDeServico/{ordemDeServicoId}:
     get:
       tags:
         - Ordens de Serviço
       summary: Consultar Ordem de Serviço
       description: |
         Endpoint para consulta de ordem de serviço por ordemDeServicoId
-      operationId: get/ordemsDeServico/{ordemDeServicoId}
+      operationId: get/ordensDeServico/{ordemDeServicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
         - name: ordemDeServicoId
@@ -1763,7 +1763,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordemsDeServico/{ordemDeServicoId}"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{ordemDeServicoId}"
         responses:
           default:
             statusCode: "503"
@@ -1774,14 +1774,14 @@ paths:
           integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-  /ordemsDeServico/{ordemDeServicoId}/diagnosticar:
+  /ordensDeServico/{ordemDeServicoId}/diagnosticar:
     post:
       tags:
         - Ordens de Serviço
       summary: Diagnosticar Ordem de Serviço
       description: |
         Endpoint para iniciar o diagnóstico de uma ordem de serviço, alterando seu status para EM_DIAGNOSTICO
-      operationId: post/ordemsDeServico/{ordemDeServicoId}/diagnosticar
+      operationId: post/ordensDeServico/{ordemDeServicoId}/diagnosticar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
         - name: ordemDeServicoId
@@ -1825,7 +1825,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordemsDeServico/{ordemDeServicoId}/diagnosticar"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{ordemDeServicoId}/diagnosticar"
         responses:
           default:
             statusCode: "503"
