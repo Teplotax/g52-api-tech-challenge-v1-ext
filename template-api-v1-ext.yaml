@@ -1774,6 +1774,68 @@ paths:
           integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
+  /ordemsDeServico/{ordemDeServicoId}/diagnosticar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Diagnosticar Ordem de Serviço
+      description: |
+        Endpoint para iniciar o diagnóstico de uma ordem de serviço, alterando seu status para EM_DIAGNOSTICO
+      operationId: post/ordemsDeServico/{ordemDeServicoId}/diagnosticar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: ordemDeServicoId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Ordem de Serviço diagnosticada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvaluateOSResponse"
+              examples:
+                EvaluateOSResponse:
+                  $ref: "#/components/examples/EvaluateOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordemsDeServico/{ordemDeServicoId}/diagnosticar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
 
 components:
   parameters:
@@ -1844,6 +1906,8 @@ components:
       $ref: ./schemas/FindOSResponse.yaml
     ListOSResponse:
       $ref: ./schemas/ListOSResponse.yaml
+    EvaluateOSResponse:
+      $ref: ./schemas/EvaluateOSResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -1913,6 +1977,8 @@ components:
       $ref: ./examples/200FindOSResponse.yaml
     ListOSResponse:
       $ref: ./examples/200ListOSResponse.yaml
+    EvaluateOSResponse:
+      $ref: ./examples/200EvaluateOSResponse.yaml
 
   responses:
     '204':
