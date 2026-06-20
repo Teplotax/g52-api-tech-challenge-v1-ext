@@ -1,0 +1,47 @@
+value:
+  id: 1
+  status: EM_DIAGNOSTICO
+  clienteId: 1
+  clienteNomeSocial: João Silva
+  clienteDocumento: 123.456.789-00
+  veiculoId: 1
+  veiculoPlaca: ABC1D23
+  complexidade: MEDIA
+  sintomas: Barulho ao frear e vibração no volante em altas velocidades
+  tagChave: OS-2024-001
+  criadaEm: "2024-06-01T10:00:00"
+  precoTotal: 485.00
+  precoTotalAprovado: null
+  precoServicosDesejados: 485.00
+  precoServicosNecessarios: 0.00
+  precoServicosAdicionais: 0.00
+  justificativaNecessarios: null
+  justificativaAdicionais: null
+  servicosDesejados:
+    - servico: Revisão de freios
+      precoTotal: 320.00
+      precoHorasTecnicas: 120.00
+      pecas:
+        - peca: Pastilha de freio dianteira
+          ean: 7891234560001
+          quantidade: 4
+          precoUnitario: 35.00
+          precoTotal: 140.00
+      insumos:
+        - insumo: Fluido de freio DOT 4
+          ean: 7891234560010
+          quantidade: 1
+          precoUnitario: 25.00
+          precoTotal: 25.00
+    - servico: Balanceamento de rodas
+      precoTotal: 165.00
+      precoHorasTecnicas: 80.00
+      pecas: []
+      insumos: []
+  servicosNecessarios: []
+  servicosAdicionais: []
+  historico:
+    - status: RECEBIDA
+      createdAt: "2024-06-01T10:00:00"
+    - status: EM_DIAGNOSTICO
+      createdAt: "2024-06-01T11:30:00"
