@@ -1714,17 +1714,17 @@ paths:
           integration.request.querystring.size: "method.request.querystring.size"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{ordemDeServicoId}:
+  /ordensDeServico/{osId}:
     get:
       tags:
         - Ordens de Serviço
       summary: Consultar OS
       description: |
-        Endpoint para consulta de ordem de serviço por ordemDeServicoId
-      operationId: get/ordensDeServico/{ordemDeServicoId}
+        Endpoint para consulta de ordem de serviço por osId
+      operationId: get/ordensDeServico/{osId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
-        - name: ordemDeServicoId
+        - name: osId
           in: path
           description: Identificador da ordem de serviço
           required: true
@@ -1763,7 +1763,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{ordemDeServicoId}"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}"
         responses:
           default:
             statusCode: "503"
@@ -1771,20 +1771,20 @@ paths:
         connectionType: "VPC_LINK"
         connectionId: "${vpclink}"
         requestParameters:
-          integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
+          integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{ordemDeServicoId}/diagnosticar:
+  /ordensDeServico/{osId}/diagnosticar:
     post:
       tags:
         - Ordens de Serviço
       summary: Diagnosticar OS
       description: |
         Endpoint para iniciar o diagnóstico de uma ordem de serviço, alterando seu status para EM_DIAGNOSTICO
-      operationId: post/ordensDeServico/{ordemDeServicoId}/diagnosticar
+      operationId: post/ordensDeServico/{osId}/diagnosticar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
-        - name: ordemDeServicoId
+        - name: osId
           in: path
           description: Identificador da ordem de serviço
           required: true
@@ -1825,7 +1825,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{ordemDeServicoId}/diagnosticar"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/diagnosticar"
         responses:
           default:
             statusCode: "503"
@@ -1833,20 +1833,20 @@ paths:
         connectionType: "VPC_LINK"
         connectionId: "${vpclink}"
         requestParameters:
-          integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
+          integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{ordemDeServicoId}/adicionarServicos:
+  /ordensDeServico/{osId}/adicionarServicos:
     post:
       tags:
         - Ordens de Serviço
       summary: Adicionar serviços à OS
       description: |
         Endpoint para adicionar serviços necessários e/ou adicionais a uma ordem de serviço
-      operationId: post/ordensDeServico/{ordemDeServicoId}/adicionarServicos
+      operationId: post/ordensDeServico/{osId}/adicionarServicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
-        - name: ordemDeServicoId
+        - name: osId
           in: path
           description: Identificador da ordem de serviço
           required: true
@@ -1895,7 +1895,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{ordemDeServicoId}/adicionarServicos"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/adicionarServicos"
         responses:
           default:
             statusCode: "503"
@@ -1903,7 +1903,7 @@ paths:
         connectionType: "VPC_LINK"
         connectionId: "${vpclink}"
         requestParameters:
-          integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
+          integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
