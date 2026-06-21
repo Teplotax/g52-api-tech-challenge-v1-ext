@@ -1714,17 +1714,17 @@ paths:
           integration.request.querystring.size: "method.request.querystring.size"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{ordemDeServicoId}:
+  /ordensDeServico/{osId}:
     get:
       tags:
         - Ordens de Serviço
       summary: Consultar OS
       description: |
-        Endpoint para consulta de ordem de serviço por ordemDeServicoId
-      operationId: get/ordensDeServico/{ordemDeServicoId}
+        Endpoint para consulta de ordem de serviço por osId
+      operationId: get/ordensDeServico/{osId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
-        - name: ordemDeServicoId
+        - name: osId
           in: path
           description: Identificador da ordem de serviço
           required: true
@@ -1763,7 +1763,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{ordemDeServicoId}"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}"
         responses:
           default:
             statusCode: "503"
@@ -1771,20 +1771,20 @@ paths:
         connectionType: "VPC_LINK"
         connectionId: "${vpclink}"
         requestParameters:
-          integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
+          integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{ordemDeServicoId}/diagnosticar:
+  /ordensDeServico/{osId}/diagnosticar:
     post:
       tags:
         - Ordens de Serviço
       summary: Diagnosticar OS
       description: |
         Endpoint para iniciar o diagnóstico de uma ordem de serviço, alterando seu status para EM_DIAGNOSTICO
-      operationId: post/ordensDeServico/{ordemDeServicoId}/diagnosticar
+      operationId: post/ordensDeServico/{osId}/diagnosticar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
-        - name: ordemDeServicoId
+        - name: osId
           in: path
           description: Identificador da ordem de serviço
           required: true
@@ -1825,7 +1825,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{ordemDeServicoId}/diagnosticar"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/diagnosticar"
         responses:
           default:
             statusCode: "503"
@@ -1833,7 +1833,77 @@ paths:
         connectionType: "VPC_LINK"
         connectionId: "${vpclink}"
         requestParameters:
-          integration.request.path.ordemDeServicoId: "method.request.path.ordemDeServicoId"
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/adicionarServicos:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Adicionar serviços à OS
+      description: |
+        Endpoint para adicionar serviços necessários e/ou adicionais a uma ordem de serviço
+      operationId: post/ordensDeServico/{osId}/adicionarServicos
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddServicosRequest"
+            examples:
+              AddServicosRequest:
+                $ref: "#/components/examples/AddServicosRequest"
+      responses:
+        "200":
+          description: Serviços adicionados à Ordem de Serviço
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddServicosResponse"
+              examples:
+                AddServicosResponse:
+                  $ref: "#/components/examples/AddServicosResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/adicionarServicos"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
@@ -1908,6 +1978,10 @@ components:
       $ref: ./schemas/ListOSResponse.yaml
     EvaluateOSResponse:
       $ref: ./schemas/EvaluateOSResponse.yaml
+    AddServicosRequest:
+      $ref: ./schemas/AddServicosRequest.yaml
+    AddServicosResponse:
+      $ref: ./schemas/AddServicosResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -1979,6 +2053,10 @@ components:
       $ref: ./examples/200ListOSResponse.yaml
     EvaluateOSResponse:
       $ref: ./examples/200EvaluateOSResponse.yaml
+    AddServicosRequest:
+      $ref: ./examples/requests/AddServicosRequest.yaml
+    AddServicosResponse:
+      $ref: ./examples/200AddServicosResponse.yaml
 
   responses:
     '204':
