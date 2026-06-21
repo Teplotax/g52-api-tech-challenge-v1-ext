@@ -10,13 +10,13 @@ value:
   sintomas: Barulho ao frear e vibração no volante em altas velocidades
   tagChave: "001"
   criadaEm: "2024-06-01T10:00:00"
-  precoTotal: 485.00
+  precoTotal: 810.00
   precoTotalAprovado: null
   precoServicosDesejados: 485.00
-  precoServicosNecessarios: 0.00
-  precoServicosAdicionais: 0.00
-  justificativaNecessarios: null
-  justificativaAdicionais: null
+  precoServicosNecessarios: 280.00
+  precoServicosAdicionais: 45.00
+  justificativaNecessarios: Identificado desgaste excessivo no disco de freio durante o diagnóstico
+  justificativaAdicionais: Mecânico identificou lâmpada do farol direito queimada durante o diagnóstico
   servicosDesejados:
     - servico: Revisão de freios
       precoTotal: 320.00
@@ -38,8 +38,28 @@ value:
       precoHorasTecnicas: 80.00
       pecas: []
       insumos: []
-  servicosNecessarios: []
-  servicosAdicionais: []
+  servicosNecessarios:
+    - servico: Troca de disco de freio
+      precoTotal: 280.00
+      precoHorasTecnicas: 100.00
+      pecas:
+        - peca: Disco de freio dianteiro
+          ean: 7891234560020
+          quantidade: 2
+          precoUnitario: 90.00
+          precoTotal: 180.00
+      insumos: []
+  servicosAdicionais:
+    - servico: Troca de lâmpada do farol
+      precoTotal: 45.00
+      precoHorasTecnicas: 21.00
+      pecas:
+        - peca: Lâmpada de Farol H7 Luz Baixa
+          ean: 7891342130177
+          quantidade: 1
+          precoUnitario: 24.00
+          precoTotal: 24.00
+      insumos: []
   historico:
     - status: RECEBIDA
       createdAt: "2024-06-01T10:00:00"
