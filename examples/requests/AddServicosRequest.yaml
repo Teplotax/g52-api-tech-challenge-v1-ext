@@ -1,0 +1,7 @@
+value:
+  justificativaNecessarios: Identificado desgaste excessivo no disco de freio durante o diagnóstico
+  justificativaAdicionais: Identificada lâmpada do farol direito queimada durante o diagnóstico
+  servicosNecessarios:
+    - 3
+  servicosAdicionais:
+    - 9

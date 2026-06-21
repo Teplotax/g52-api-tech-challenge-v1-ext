@@ -1,0 +1,20 @@
+type: object
+properties:
+  justificativaNecessarios:
+    type: string
+    description: Justificativa dos serviços necessários
+  justificativaAdicionais:
+    type: string
+    description: Justificativa dos serviços adicionais
+  servicosNecessarios:
+    type: array
+    description: Lista de IDs dos serviços necessários a adicionar
+    items:
+      type: integer
+      format: int64
+  servicosAdicionais:
+    type: array
+    description: Lista de IDs dos serviços adicionais a adicionar
+    items:
+      type: integer
+      format: int64
