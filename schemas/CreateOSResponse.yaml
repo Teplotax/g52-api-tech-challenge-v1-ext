@@ -1,5 +1,9 @@
 type: object
 properties:
+  id:
+    type: integer
+    format: int64
+    description: Identificador da OS
   status:
     type: string
     description: Status da OS
@@ -13,6 +17,13 @@ properties:
       - ENTREGUE
       - CANCELADA
       - DEVOLVIDO
+  complexidade:
+    type: string
+    description: Complexidade da OS
+    enum:
+      - BAIXA
+      - MEDIA
+      - ALTA
   sintomas:
     type: string
     description: Descrição dos sintomas relatados

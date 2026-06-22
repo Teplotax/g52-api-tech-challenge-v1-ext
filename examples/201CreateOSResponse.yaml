@@ -1,5 +1,7 @@
 value:
+  id: 1
   status: RECEBIDA
+  complexidade: BAIXA
   sintomas: Barulho ao frear e vibração no volante em altas velocidades
   clienteId: 1
   clienteNomeSocial: João Silva
@@ -9,7 +11,8 @@ value:
   criadaEm: "2024-06-01T10:00:00"
   precoTotal: 485.00
   servicosDesejados:
-    - servico: Revisão de freios
+    - id: 1
+      servico: Revisão de freios
       precoTotal: 320.00
       precoHorasTecnicas: 120.00
       pecas:
@@ -29,7 +32,8 @@ value:
           quantidade: 1
           precoUnitario: 25.00
           precoTotal: 25.00
-    - servico: Balanceamento de rodas
+    - id: 2
+      servico: Balanceamento de rodas
       precoTotal: 165.00
       precoHorasTecnicas: 80.00
       pecas: []
