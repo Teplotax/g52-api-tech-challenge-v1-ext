@@ -18,7 +18,8 @@ value:
   justificativaNecessarios: null
   justificativaAdicionais: null
   servicosDesejados:
-    - servico: Revisão de freios
+    - id: 1
+      servico: Revisão de freios
       precoTotal: 320.00
       precoHorasTecnicas: 120.00
       pecas:
@@ -33,7 +34,8 @@ value:
           quantidade: 1
           precoUnitario: 25.00
           precoTotal: 25.00
-    - servico: Balanceamento de rodas
+    - id: 2
+      servico: Balanceamento de rodas
       precoTotal: 165.00
       precoHorasTecnicas: 80.00
       pecas: []

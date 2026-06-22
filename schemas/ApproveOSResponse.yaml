@@ -98,6 +98,10 @@ definitions:
     items:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+          description: Identificador do serviço na OS
         servico:
           type: string
           description: Nome do serviço
