@@ -1906,6 +1906,68 @@ paths:
           integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/aprovar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Aprovar OS
+      description: |
+        Endpoint para aprovar todos os serviços de uma ordem de serviço, alterando seu status para APROVADA
+      operationId: post/ordensDeServico/{osId}/aprovar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Ordem de Serviço aprovada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApproveOSResponse"
+              examples:
+                ApproveOSResponse:
+                  $ref: "#/components/examples/ApproveOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/aprovar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
 
 components:
   parameters:
@@ -1982,6 +2044,8 @@ components:
       $ref: ./schemas/AddServicosRequest.yaml
     AddServicosResponse:
       $ref: ./schemas/AddServicosResponse.yaml
+    ApproveOSResponse:
+      $ref: ./schemas/ApproveOSResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -2057,6 +2121,8 @@ components:
       $ref: ./examples/requests/AddServicosRequest.yaml
     AddServicosResponse:
       $ref: ./examples/200AddServicosResponse.yaml
+    ApproveOSResponse:
+      $ref: ./examples/200ApproveOSResponse.yaml
 
   responses:
     '204':
