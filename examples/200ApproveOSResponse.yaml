@@ -18,7 +18,8 @@ value:
   justificativaNecessarios: Identificado desgaste excessivo no disco de freio durante o diagnóstico
   justificativaAdicionais: Mecânico identificou lâmpada do farol direito queimada durante o diagnóstico
   servicosDesejados:
-    - servico: Revisão de freios
+    - id: 1
+      servico: Revisão de freios
       aprovado: true
       precoTotal: 320.00
       precoHorasTecnicas: 120.00
@@ -34,14 +35,16 @@ value:
           quantidade: 1
           precoUnitario: 25.00
           precoTotal: 25.00
-    - servico: Balanceamento de rodas
+    - id: 2
+      servico: Balanceamento de rodas
       aprovado: true
       precoTotal: 165.00
       precoHorasTecnicas: 80.00
       pecas: []
       insumos: []
   servicosNecessarios:
-    - servico: Troca de disco de freio
+    - id: 3
+      servico: Troca de disco de freio
       aprovado: true
       precoTotal: 280.00
       precoHorasTecnicas: 100.00
@@ -53,7 +56,8 @@ value:
           precoTotal: 180.00
       insumos: []
   servicosAdicionais:
-    - servico: Troca de lâmpada do farol
+    - id: 4
+      servico: Troca de lâmpada do farol
       aprovado: true
       precoTotal: 45.00
       precoHorasTecnicas: 21.00
