@@ -478,10 +478,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AprovarOSRequest"
+              $ref: "#/components/schemas/ApproveOSRequest"
             examples:
-              AprovarOSRequest:
-                $ref: "#/components/examples/AprovarOSRequest"
+              ApproveOSRequest:
+                $ref: "#/components/examples/ApproveOSRequest"
       responses:
         "200":
           description: Ordem de Serviço aprovada
@@ -2237,8 +2237,8 @@ components:
       $ref: ./schemas/AddServicosResponse.yaml
     ApproveOSResponse:
       $ref: ./schemas/ApproveOSResponse.yaml
-    AprovarOSRequest:
-      $ref: ./schemas/AprovarOSRequest.yaml
+    ApproveOSRequest:
+      $ref: ./schemas/ApproveOSRequest.yaml
     RequestApprovalResponse:
       $ref: ./schemas/RequestApprovalResponse.yaml
     CancelOSResponse:
@@ -2324,8 +2324,8 @@ components:
       $ref: ./examples/200ApproveOSResponse.yaml
     ApproveOSParcialResponse:
       $ref: ./examples/200ApproveOSParcialResponse.yaml
-    AprovarOSRequest:
-      $ref: ./examples/requests/AprovarOSRequest.yaml
+    ApproveOSRequest:
+      $ref: ./examples/requests/ApproveOSRequest.yaml
     RequestApprovalResponse:
       $ref: ./examples/200RequestApprovalResponse.yaml
     CancelOSResponse:
