@@ -1906,6 +1906,66 @@ paths:
           integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/cancelar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Cancelar OS
+      description: |
+        Cancela a ordem de serviço alterando seu status para CANCELADA.
+        Para status anteriores a APROVADA (RECEBIDA, EM_DIAGNOSTICO, AGUARDANDO_APROVACAO), libera a reserva de estoque de todos os serviços.
+        Para status a partir de APROVADA (APROVADA, EM_EXECUCAO, FINALIZADA), libera apenas a reserva dos serviços aprovados.
+      operationId: post/ordensDeServico/{osId}/cancelar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Ordem de Serviço cancelada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CancelOSResponse"
+              examples:
+                CancelOSResponse:
+                  $ref: "#/components/examples/CancelOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/cancelar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
   /ordensDeServico/{osId}/solicitarAprovacao:
     post:
       tags:
@@ -1989,10 +2049,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ApproveOSRequest"
+              $ref: "#/components/schemas/AprovarOSRequest"
             examples:
-              ApproveOSRequest:
-                $ref: "#/components/examples/ApproveOSRequest"
+              AprovarOSRequest:
+                $ref: "#/components/examples/AprovarOSRequest"
       responses:
         "200":
           description: Ordem de Serviço aprovada
@@ -2118,10 +2178,12 @@ components:
       $ref: ./schemas/AddServicosResponse.yaml
     ApproveOSResponse:
       $ref: ./schemas/ApproveOSResponse.yaml
-    ApproveOSRequest:
-      $ref: ./schemas/ApproveOSRequest.yaml
+    AprovarOSRequest:
+      $ref: ./schemas/AprovarOSRequest.yaml
     RequestApprovalResponse:
       $ref: ./schemas/RequestApprovalResponse.yaml
+    CancelOSResponse:
+      $ref: ./schemas/CancelOSResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -2201,10 +2263,12 @@ components:
       $ref: ./examples/200ApproveOSResponse.yaml
     ApproveOSParcialResponse:
       $ref: ./examples/200ApproveOSParcialResponse.yaml
-    ApproveOSRequest:
-      $ref: ./examples/requests/ApproveOSRequest.yaml
+    AprovarOSRequest:
+      $ref: ./examples/requests/AprovarOSRequest.yaml
     RequestApprovalResponse:
       $ref: ./examples/200RequestApprovalResponse.yaml
+    CancelOSResponse:
+      $ref: ./examples/200CancelOSResponse.yaml
 
   responses:
     '204':
