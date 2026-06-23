@@ -1906,14 +1906,15 @@ paths:
           integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{osId}/aprovar:
+  /ordensDeServico/{osId}/solicitarAprovacao:
     post:
       tags:
         - Ordens de Serviço
-      summary: Aprovar OS
+      summary: Solicitar aprovação da OS
       description: |
-        Endpoint para aprovar todos os serviços de uma ordem de serviço, alterando seu status para APROVADA
-      operationId: post/ordensDeServico/{osId}/aprovar
+        Envia o orçamento ao cliente por e-mail e altera o status da OS para AGUARDANDO_APROVACAO.
+        O e-mail contém um link com token HMAC para o cliente aprovar ou rejeitar serviços individualmente.
+      operationId: post/ordensDeServico/{osId}/solicitarAprovacao
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
         - name: osId
@@ -1925,6 +1926,75 @@ paths:
           example: 1
       responses:
         "200":
+          description: Solicitação de aprovação enviada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestApprovalResponse"
+              examples:
+                RequestApprovalResponse:
+                  $ref: "#/components/examples/RequestApprovalResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/solicitarAprovacao"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/aprovar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Aprovar OS
+      description: |
+        Aprova a ordem de serviço alterando seu status para APROVADA.
+        Se o corpo da requisição contiver uma lista de IDs em `servicosAprovados`, apenas esses serviços serão aprovados (aprovação parcial).
+        Se o corpo for omitido ou a lista estiver vazia, todos os serviços serão aprovados.
+      operationId: post/ordensDeServico/{osId}/aprovar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApproveOSRequest"
+            examples:
+              ApproveOSRequest:
+                $ref: "#/components/examples/ApproveOSRequest"
+      responses:
+        "200":
           description: Ordem de Serviço aprovada
           content:
             application/json:
@@ -1933,6 +2003,8 @@ paths:
               examples:
                 ApproveOSResponse:
                   $ref: "#/components/examples/ApproveOSResponse"
+                ApproveOSParcialResponse:
+                  $ref: "#/components/examples/ApproveOSParcialResponse"
         "400":
           $ref: "#/components/responses/400"
         "401":
@@ -2046,6 +2118,10 @@ components:
       $ref: ./schemas/AddServicosResponse.yaml
     ApproveOSResponse:
       $ref: ./schemas/ApproveOSResponse.yaml
+    ApproveOSRequest:
+      $ref: ./schemas/ApproveOSRequest.yaml
+    RequestApprovalResponse:
+      $ref: ./schemas/RequestApprovalResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -2123,6 +2199,12 @@ components:
       $ref: ./examples/200AddServicosResponse.yaml
     ApproveOSResponse:
       $ref: ./examples/200ApproveOSResponse.yaml
+    ApproveOSParcialResponse:
+      $ref: ./examples/200ApproveOSParcialResponse.yaml
+    ApproveOSRequest:
+      $ref: ./examples/requests/ApproveOSRequest.yaml
+    RequestApprovalResponse:
+      $ref: ./examples/200RequestApprovalResponse.yaml
 
   responses:
     '204':
