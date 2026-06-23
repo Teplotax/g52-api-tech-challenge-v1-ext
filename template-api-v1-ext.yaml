@@ -589,6 +589,66 @@ paths:
           integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/finalizar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Finalizar OS
+      description: |
+        Finaliza a ordem de serviço alterando seu status para FINALIZADA.
+        Consome o estoque real (removerEstoque) e libera a reserva (removerEstoqueReservado) de todos os serviços aprovados.
+        Só é permitido a partir do status EM_EXECUCAO.
+      operationId: post/ordensDeServico/{osId}/finalizar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Ordem de Serviço finalizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FinalizeOSResponse"
+              examples:
+                FinalizeOSResponse:
+                  $ref: "#/components/examples/FinalizeOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/finalizar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
   /ordensDeServico/{osId}/cancelar:
     post:
       tags:
@@ -2245,6 +2305,8 @@ components:
       $ref: ./schemas/CancelOSResponse.yaml
     ExecuteOSResponse:
       $ref: ./schemas/ExecuteOSResponse.yaml
+    FinalizeOSResponse:
+      $ref: ./schemas/FinalizeOSResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -2332,6 +2394,8 @@ components:
       $ref: ./examples/200CancelOSResponse.yaml
     ExecuteOSResponse:
       $ref: ./examples/200ExecuteOSResponse.yaml
+    FinalizeOSResponse:
+      $ref: ./examples/200FinalizeOSResponse.yaml
 
   responses:
     '204':
