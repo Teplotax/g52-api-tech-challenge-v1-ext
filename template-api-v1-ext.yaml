@@ -31,6 +31,624 @@ servers:
     description: Development
 
 paths:
+  /ordensDeServico:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Criar OS
+      description: |
+        Endpoint para criar uma ordem de serviço
+      operationId: post/ordensDeServico
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOSRequest"
+            examples:
+              CreateOSRequest:
+                $ref: "#/components/examples/CreateOSRequest"
+      responses:
+        "201":
+          description: Ordem de Serviço criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOSResponse"
+              examples:
+                CreateOSResponse:
+                  $ref: "#/components/examples/CreateOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+    get:
+      tags:
+        - Ordens de Serviço
+      summary: Listar OS
+      description: |
+        Endpoint para listagem paginada de ordens de serviço com filtros opcionais
+      operationId: get/ordensDeServico
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: placa
+          in: query
+          description: Placa do veículo para filtrar
+          required: false
+          schema:
+            type: string
+        - name: documentoCliente
+          in: query
+          description: Documento do cliente para filtrar
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Status da OS para filtrar
+          required: false
+          schema:
+            type: string
+            enum:
+              - RECEBIDA
+              - EM_DIAGNOSTICO
+              - AGUARDANDO_APROVACAO
+              - APROVADA
+              - EM_EXECUCAO
+              - FINALIZADA
+              - ENTREGUE
+              - CANCELADA
+              - DEVOLVIDO
+        - name: dataInicio
+          in: query
+          description: Data de início do range (ex. 2026-06-19)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: dataFim
+          in: query
+          description: Data de fim do range (ex. 2026-06-19)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Número de ordens de serviço por página
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Ordens de Serviço listadas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListOSResponse"
+              examples:
+                ListOSResponse:
+                  $ref: "#/components/examples/ListOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.querystring.placa: "method.request.querystring.placa"
+          integration.request.querystring.documentoCliente: "method.request.querystring.documentoCliente"
+          integration.request.querystring.status: "method.request.querystring.status"
+          integration.request.querystring.dataInicio: "method.request.querystring.dataInicio"
+          integration.request.querystring.dataFim: "method.request.querystring.dataFim"
+          integration.request.querystring.page: "method.request.querystring.page"
+          integration.request.querystring.size: "method.request.querystring.size"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}:
+    get:
+      tags:
+        - Ordens de Serviço
+      summary: Consultar OS
+      description: |
+        Endpoint para consulta de ordem de serviço por osId
+      operationId: get/ordensDeServico/{osId}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Ordem de Serviço consultada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindOSResponse"
+              examples:
+                FindOSResponse:
+                  $ref: "#/components/examples/FindOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/diagnosticar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Diagnosticar OS
+      description: |
+        Endpoint para iniciar o diagnóstico de uma ordem de serviço, alterando seu status para EM_DIAGNOSTICO
+      operationId: post/ordensDeServico/{osId}/diagnosticar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Ordem de Serviço diagnosticada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EvaluateOSResponse"
+              examples:
+                EvaluateOSResponse:
+                  $ref: "#/components/examples/EvaluateOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/diagnosticar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/adicionarServicos:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Adicionar serviços à OS
+      description: |
+        Endpoint para adicionar serviços necessários e/ou adicionais a uma ordem de serviço
+      operationId: post/ordensDeServico/{osId}/adicionarServicos
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddServicosRequest"
+            examples:
+              AddServicosRequest:
+                $ref: "#/components/examples/AddServicosRequest"
+      responses:
+        "200":
+          description: Serviços adicionados à Ordem de Serviço
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddServicosResponse"
+              examples:
+                AddServicosResponse:
+                  $ref: "#/components/examples/AddServicosResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/adicionarServicos"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/solicitarAprovacao:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Solicitar aprovação da OS
+      description: |
+        Envia o orçamento ao cliente por e-mail e altera o status da OS para AGUARDANDO_APROVACAO.
+        O e-mail contém um link com token HMAC para o cliente aprovar ou rejeitar serviços individualmente.
+      operationId: post/ordensDeServico/{osId}/solicitarAprovacao
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Solicitação de aprovação enviada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestApprovalResponse"
+              examples:
+                RequestApprovalResponse:
+                  $ref: "#/components/examples/RequestApprovalResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/solicitarAprovacao"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/aprovar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Aprovar OS
+      description: |
+        Aprova a ordem de serviço alterando seu status para APROVADA.
+        Se o corpo da requisição contiver uma lista de IDs em `servicosAprovados`, apenas esses serviços serão aprovados (aprovação parcial).
+        Se o corpo for omitido ou a lista estiver vazia, todos os serviços serão aprovados.
+      operationId: post/ordensDeServico/{osId}/aprovar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AprovarOSRequest"
+            examples:
+              AprovarOSRequest:
+                $ref: "#/components/examples/AprovarOSRequest"
+      responses:
+        "200":
+          description: Ordem de Serviço aprovada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApproveOSResponse"
+              examples:
+                ApproveOSResponse:
+                  $ref: "#/components/examples/ApproveOSResponse"
+                ApproveOSParcialResponse:
+                  $ref: "#/components/examples/ApproveOSParcialResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      #      security:
+      #        - APIGatewaySTSAuthorizer:
+      #            - none
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/aprovar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
+  /ordensDeServico/{osId}/executar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Iniciar execução da OS
+      description: |
+        Inicia a execução da ordem de serviço alterando seu status para EM_EXECUCAO.
+        Só é permitido a partir do status APROVADA.
+      operationId: post/ordensDeServico/{osId}/executar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Execução da Ordem de Serviço iniciada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecuteOSResponse"
+              examples:
+                ExecuteOSResponse:
+                  $ref: "#/components/examples/ExecuteOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/executar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/cancelar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Cancelar OS
+      description: |
+        Cancela a ordem de serviço alterando seu status para CANCELADA.
+        Para status anteriores a APROVADA (RECEBIDA, EM_DIAGNOSTICO, AGUARDANDO_APROVACAO), libera a reserva de estoque de todos os serviços.
+        Para status a partir de APROVADA (APROVADA, EM_EXECUCAO, FINALIZADA), libera apenas a reserva dos serviços aprovados.
+      operationId: post/ordensDeServico/{osId}/cancelar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Ordem de Serviço cancelada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CancelOSResponse"
+              examples:
+                CancelOSResponse:
+                  $ref: "#/components/examples/CancelOSResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/cancelar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
   /clientes:
     post:
       tags:
@@ -1542,624 +2160,6 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
-  /ordensDeServico:
-    post:
-      tags:
-        - Ordens de Serviço
-      summary: Criar OS
-      description: |
-        Endpoint para criar uma ordem de serviço
-      operationId: post/ordensDeServico
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateOSRequest"
-            examples:
-              CreateOSRequest:
-                $ref: "#/components/examples/CreateOSRequest"
-      responses:
-        "201":
-          description: Ordem de Serviço criada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateOSResponse"
-              examples:
-                CreateOSResponse:
-                  $ref: "#/components/examples/CreateOSResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "405":
-          $ref: "#/components/responses/405"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-    get:
-      tags:
-        - Ordens de Serviço
-      summary: Listar OS
-      description: |
-        Endpoint para listagem paginada de ordens de serviço com filtros opcionais
-      operationId: get/ordensDeServico
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-        - name: placa
-          in: query
-          description: Placa do veículo para filtrar
-          required: false
-          schema:
-            type: string
-        - name: documentoCliente
-          in: query
-          description: Documento do cliente para filtrar
-          required: false
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: Status da OS para filtrar
-          required: false
-          schema:
-            type: string
-            enum:
-              - RECEBIDA
-              - EM_DIAGNOSTICO
-              - AGUARDANDO_APROVACAO
-              - APROVADA
-              - EM_EXECUCAO
-              - FINALIZADA
-              - ENTREGUE
-              - CANCELADA
-              - DEVOLVIDO
-        - name: dataInicio
-          in: query
-          description: Data de início do range (ex. 2026-06-19)
-          required: false
-          schema:
-            type: string
-            format: date
-        - name: dataFim
-          in: query
-          description: Data de fim do range (ex. 2026-06-19)
-          required: false
-          schema:
-            type: string
-            format: date
-        - name: page
-          in: query
-          description: Número da página
-          required: false
-          schema:
-            type: integer
-            default: 0
-        - name: size
-          in: query
-          description: Número de ordens de serviço por página
-          required: false
-          schema:
-            type: integer
-            default: 20
-      responses:
-        "200":
-          description: Ordens de Serviço listadas
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListOSResponse"
-              examples:
-                ListOSResponse:
-                  $ref: "#/components/examples/ListOSResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
-        "405":
-          $ref: "#/components/responses/405"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.querystring.placa: "method.request.querystring.placa"
-          integration.request.querystring.documentoCliente: "method.request.querystring.documentoCliente"
-          integration.request.querystring.status: "method.request.querystring.status"
-          integration.request.querystring.dataInicio: "method.request.querystring.dataInicio"
-          integration.request.querystring.dataFim: "method.request.querystring.dataFim"
-          integration.request.querystring.page: "method.request.querystring.page"
-          integration.request.querystring.size: "method.request.querystring.size"
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{osId}:
-    get:
-      tags:
-        - Ordens de Serviço
-      summary: Consultar OS
-      description: |
-        Endpoint para consulta de ordem de serviço por osId
-      operationId: get/ordensDeServico/{osId}
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-        - name: osId
-          in: path
-          description: Identificador da ordem de serviço
-          required: true
-          schema:
-            type: integer
-          example: 1
-      responses:
-        "200":
-          description: Ordem de Serviço consultada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FindOSResponse"
-              examples:
-                FindOSResponse:
-                  $ref: "#/components/examples/FindOSResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
-        "405":
-          $ref: "#/components/responses/405"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.path.osId: "method.request.path.osId"
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{osId}/diagnosticar:
-    post:
-      tags:
-        - Ordens de Serviço
-      summary: Diagnosticar OS
-      description: |
-        Endpoint para iniciar o diagnóstico de uma ordem de serviço, alterando seu status para EM_DIAGNOSTICO
-      operationId: post/ordensDeServico/{osId}/diagnosticar
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-        - name: osId
-          in: path
-          description: Identificador da ordem de serviço
-          required: true
-          schema:
-            type: integer
-          example: 1
-      responses:
-        "200":
-          description: Ordem de Serviço diagnosticada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EvaluateOSResponse"
-              examples:
-                EvaluateOSResponse:
-                  $ref: "#/components/examples/EvaluateOSResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
-        "405":
-          $ref: "#/components/responses/405"
-        "422":
-          $ref: "#/components/responses/422"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/diagnosticar"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.path.osId: "method.request.path.osId"
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{osId}/adicionarServicos:
-    post:
-      tags:
-        - Ordens de Serviço
-      summary: Adicionar serviços à OS
-      description: |
-        Endpoint para adicionar serviços necessários e/ou adicionais a uma ordem de serviço
-      operationId: post/ordensDeServico/{osId}/adicionarServicos
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-        - name: osId
-          in: path
-          description: Identificador da ordem de serviço
-          required: true
-          schema:
-            type: integer
-          example: 1
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AddServicosRequest"
-            examples:
-              AddServicosRequest:
-                $ref: "#/components/examples/AddServicosRequest"
-      responses:
-        "200":
-          description: Serviços adicionados à Ordem de Serviço
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AddServicosResponse"
-              examples:
-                AddServicosResponse:
-                  $ref: "#/components/examples/AddServicosResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
-        "405":
-          $ref: "#/components/responses/405"
-        "422":
-          $ref: "#/components/responses/422"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/adicionarServicos"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.path.osId: "method.request.path.osId"
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{osId}/executar:
-    post:
-      tags:
-        - Ordens de Serviço
-      summary: Iniciar execução da OS
-      description: |
-        Inicia a execução da ordem de serviço alterando seu status para EM_EXECUCAO.
-        Só é permitido a partir do status APROVADA.
-      operationId: post/ordensDeServico/{osId}/executar
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-        - name: osId
-          in: path
-          description: Identificador da ordem de serviço
-          required: true
-          schema:
-            type: integer
-          example: 1
-      responses:
-        "200":
-          description: Execução da Ordem de Serviço iniciada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ExecuteOSResponse"
-              examples:
-                ExecuteOSResponse:
-                  $ref: "#/components/examples/ExecuteOSResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
-        "405":
-          $ref: "#/components/responses/405"
-        "422":
-          $ref: "#/components/responses/422"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/executar"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.path.osId: "method.request.path.osId"
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{osId}/cancelar:
-    post:
-      tags:
-        - Ordens de Serviço
-      summary: Cancelar OS
-      description: |
-        Cancela a ordem de serviço alterando seu status para CANCELADA.
-        Para status anteriores a APROVADA (RECEBIDA, EM_DIAGNOSTICO, AGUARDANDO_APROVACAO), libera a reserva de estoque de todos os serviços.
-        Para status a partir de APROVADA (APROVADA, EM_EXECUCAO, FINALIZADA), libera apenas a reserva dos serviços aprovados.
-      operationId: post/ordensDeServico/{osId}/cancelar
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-        - name: osId
-          in: path
-          description: Identificador da ordem de serviço
-          required: true
-          schema:
-            type: integer
-          example: 1
-      responses:
-        "200":
-          description: Ordem de Serviço cancelada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CancelOSResponse"
-              examples:
-                CancelOSResponse:
-                  $ref: "#/components/examples/CancelOSResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
-        "405":
-          $ref: "#/components/responses/405"
-        "422":
-          $ref: "#/components/responses/422"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/cancelar"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.path.osId: "method.request.path.osId"
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{osId}/solicitarAprovacao:
-    post:
-      tags:
-        - Ordens de Serviço
-      summary: Solicitar aprovação da OS
-      description: |
-        Envia o orçamento ao cliente por e-mail e altera o status da OS para AGUARDANDO_APROVACAO.
-        O e-mail contém um link com token HMAC para o cliente aprovar ou rejeitar serviços individualmente.
-      operationId: post/ordensDeServico/{osId}/solicitarAprovacao
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-        - name: osId
-          in: path
-          description: Identificador da ordem de serviço
-          required: true
-          schema:
-            type: integer
-          example: 1
-      responses:
-        "200":
-          description: Solicitação de aprovação enviada com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RequestApprovalResponse"
-              examples:
-                RequestApprovalResponse:
-                  $ref: "#/components/examples/RequestApprovalResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
-        "405":
-          $ref: "#/components/responses/405"
-        "422":
-          $ref: "#/components/responses/422"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/solicitarAprovacao"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.path.osId: "method.request.path.osId"
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-  /ordensDeServico/{osId}/aprovar:
-    post:
-      tags:
-        - Ordens de Serviço
-      summary: Aprovar OS
-      description: |
-        Aprova a ordem de serviço alterando seu status para APROVADA.
-        Se o corpo da requisição contiver uma lista de IDs em `servicosAprovados`, apenas esses serviços serão aprovados (aprovação parcial).
-        Se o corpo for omitido ou a lista estiver vazia, todos os serviços serão aprovados.
-      operationId: post/ordensDeServico/{osId}/aprovar
-      parameters:
-        - $ref: "#/components/parameters/x_correlationid"
-        - name: osId
-          in: path
-          description: Identificador da ordem de serviço
-          required: true
-          schema:
-            type: integer
-          example: 1
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AprovarOSRequest"
-            examples:
-              AprovarOSRequest:
-                $ref: "#/components/examples/AprovarOSRequest"
-      responses:
-        "200":
-          description: Ordem de Serviço aprovada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApproveOSResponse"
-              examples:
-                ApproveOSResponse:
-                  $ref: "#/components/examples/ApproveOSResponse"
-                ApproveOSParcialResponse:
-                  $ref: "#/components/examples/ApproveOSParcialResponse"
-        "400":
-          $ref: "#/components/responses/400"
-        "401":
-          $ref: "#/components/responses/401"
-        "403":
-          $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
-        "405":
-          $ref: "#/components/responses/405"
-        "422":
-          $ref: "#/components/responses/422"
-        "500":
-          $ref: "#/components/responses/500"
-        "503":
-          $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
-      x-amazon-apigateway-integration:
-        timeoutInMillis: 14000
-        type: "http_proxy"
-        httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/aprovar"
-        responses:
-          default:
-            statusCode: "503"
-        passthroughBehavior: "when_no_match"
-        connectionType: "VPC_LINK"
-        connectionId: "${vpclink}"
-        requestParameters:
-          integration.request.path.osId: "method.request.path.osId"
-          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
-      x-amazon-apigateway-request-validator: params-only
-
 components:
   parameters:
     x_correlationid:
@@ -2377,4 +2377,3 @@ x-amazon-apigateway-policy:
     - Effect: Allow
       Principal: "*"
       Action: execute-api:Invoke
-      Resource: "*"
