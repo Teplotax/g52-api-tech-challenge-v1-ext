@@ -1,0 +1,8 @@
+type: object
+properties:
+  servicosAprovados:
+    type: array
+    description: Lista de IDs dos serviços aprovados pelo cliente. Se não informado ou vazio, todos os serviços serão aprovados.
+    items:
+      type: integer
+      format: int64
