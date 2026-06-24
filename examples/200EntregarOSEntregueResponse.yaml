@@ -1,0 +1,28 @@
+value:
+  id: 1
+  status: ENTREGUE
+  clienteId: 1
+  clienteNomeSocial: João Silva
+  clienteDocumento: 123.456.789-00
+  veiculoId: 1
+  veiculoPlaca: ABC1D23
+  complexidade: MEDIA
+  sintomas: Barulho ao frear e vibração no volante em altas velocidades
+  tagChave: null
+  criadaEm: "2024-06-01T10:00:00"
+  precoTotal: 600.00
+  historico:
+    - status: RECEBIDA
+      createdAt: "2024-06-01T10:00:00"
+    - status: EM_DIAGNOSTICO
+      createdAt: "2024-06-01T11:30:00"
+    - status: AGUARDANDO_APROVACAO
+      createdAt: "2024-06-01T14:00:00"
+    - status: APROVADA
+      createdAt: "2024-06-01T15:30:00"
+    - status: EM_EXECUCAO
+      createdAt: "2024-06-01T16:00:00"
+    - status: FINALIZADA
+      createdAt: "2024-06-02T09:00:00"
+    - status: ENTREGUE
+      createdAt: "2024-06-02T10:00:00"
