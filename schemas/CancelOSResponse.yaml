@@ -51,6 +51,7 @@ properties:
     type: number
     format: decimal
     description: Preço total da OS
+  historico:
     type: array
     description: Histórico de mudanças de status
     items:
