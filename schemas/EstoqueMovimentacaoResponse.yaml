@@ -1,0 +1,17 @@
+type: object
+properties:
+  itens:
+    type: array
+    description: Produtos com estoque atualizado
+    items:
+      type: object
+      properties:
+        ean:
+          type: string
+          description: Código EAN do produto
+        nome:
+          type: string
+          description: Nome do produto
+        estoque:
+          type: integer
+          description: Estoque atual após a movimentação

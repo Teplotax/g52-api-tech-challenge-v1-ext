@@ -1977,6 +1977,129 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
+  /produtos/estoque/entrada:
+    post:
+      tags:
+        - Produtos
+      summary: Entrada de estoque
+      description: |
+        Registra entrada de estoque para um ou mais produtos identificados por EAN.
+        A operação é transacional: se qualquer EAN não for encontrado, nenhuma alteração é persistida.
+      operationId: post/produtos/estoque/entrada
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstoqueMovimentacaoRequest"
+            examples:
+              EstoqueMovimentacaoRequest:
+                $ref: "#/components/examples/EstoqueMovimentacaoRequest"
+      responses:
+        "200":
+          description: Estoque atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstoqueMovimentacaoResponse"
+              examples:
+                EstoqueEntradaResponse:
+                  $ref: "#/components/examples/EstoqueEntradaResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/produtos/estoque/entrada"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
+  /produtos/estoque/saida:
+    post:
+      tags:
+        - Produtos
+      summary: Saída de estoque
+      description: |
+        Registra saída de estoque para um ou mais produtos identificados por EAN.
+        Retorna 422 se o estoque disponível for insuficiente para qualquer item da lista.
+        A operação é transacional: se qualquer item falhar, nenhuma alteração é persistida.
+      operationId: post/produtos/estoque/saida
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstoqueMovimentacaoRequest"
+            examples:
+              EstoqueMovimentacaoRequest:
+                $ref: "#/components/examples/EstoqueMovimentacaoRequest"
+      responses:
+        "200":
+          description: Estoque atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstoqueMovimentacaoResponse"
+              examples:
+                EstoqueSaidaResponse:
+                  $ref: "#/components/examples/EstoqueSaidaResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/produtos/estoque/saida"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
   /servicos:
     post:
       tags:
@@ -2331,6 +2454,10 @@ components:
       $ref: ./schemas/UpdateInsumoRequest.yaml
     UpdateInsumoResponse:
       $ref: ./schemas/UpdateInsumoResponse.yaml
+    EstoqueMovimentacaoRequest:
+      $ref: ./schemas/EstoqueMovimentacaoRequest.yaml
+    EstoqueMovimentacaoResponse:
+      $ref: ./schemas/EstoqueMovimentacaoResponse.yaml
     CreateServicoRequest:
       $ref: ./schemas/CreateServicoRequest.yaml
     CreateServicoResponse:
@@ -2418,6 +2545,12 @@ components:
       $ref: ./examples/requests/UpdateInsumoRequest.yaml
     UpdateInsumoResponse:
       $ref: ./examples/200UpdateInsumoResponse.yaml
+    EstoqueMovimentacaoRequest:
+      $ref: ./examples/requests/EstoqueMovimentacaoRequest.yaml
+    EstoqueEntradaResponse:
+      $ref: ./examples/200EstoqueEntradaResponse.yaml
+    EstoqueSaidaResponse:
+      $ref: ./examples/200EstoqueSaidaResponse.yaml
 
     FindServicoResponse:
       $ref: ./examples/200FindServicoResponse.yaml
