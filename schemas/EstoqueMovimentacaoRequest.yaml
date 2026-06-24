@@ -1,0 +1,14 @@
+type: array
+items:
+  type: object
+  required:
+    - ean
+    - quantidade
+  properties:
+    ean:
+      type: string
+      description: Código EAN do produto
+    quantidade:
+      type: integer
+      description: Quantidade a movimentar
+      minimum: 1
