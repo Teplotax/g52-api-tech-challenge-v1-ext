@@ -1,0 +1,8 @@
+value:
+  itens:
+    - ean: "7891342010177"
+      nome: "Filtro de óleo"
+      estoque: 150
+    - ean: "5011987860575"
+      nome: "Pastilha de freio"
+      estoque: 200
