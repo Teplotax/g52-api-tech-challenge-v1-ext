@@ -51,11 +51,6 @@ properties:
     type: number
     format: decimal
     description: Preço total da OS
-  precoTotalAprovado:
-    type: number
-    format: decimal
-    description: Preço total aprovado pelo cliente
-  historico:
     type: array
     description: Histórico de mudanças de status
     items:
