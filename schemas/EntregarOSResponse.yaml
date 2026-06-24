@@ -42,7 +42,8 @@ properties:
     description: Descrição dos sintomas
   tagChave:
     type: string
-    description: Tag chave da OS
+    nullable: true
+    description: Tag chave da OS. Sempre null após entrega ou devolução.
   criadaEm:
     type: string
     format: date-time

@@ -51,10 +51,6 @@ properties:
     type: number
     format: decimal
     description: Preço total da OS
-  precoTotalAprovado:
-    type: number
-    format: decimal
-    description: Preço total aprovado pelo cliente
   precoServicosDesejados:
     type: number
     format: decimal
