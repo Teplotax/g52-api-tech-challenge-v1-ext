@@ -2,28 +2,66 @@ openapi: 3.0.0
 info:
   title: API G52 Tech Challenge
   description: |
-    Test destroy resources
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit.  
-    Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    API de gerenciamento de ordens de serviço para oficinas mecânicas. Permite controlar o ciclo de vida
+    completo de uma OS — desde a abertura até a entrega do veículo — além de gerenciar clientes, veículos,
+    peças, insumos e serviços cadastrados.
 
-    ### Features
+    ---
 
-    - Fast and reliable
-    - Secure endpoints
-    - Easy integration
+    ## Ciclo de vida de uma OS
 
-    ### Example Table
+    Toda OS percorre um fluxo de status bem definido. As transições válidas são:
 
-    | Method | Endpoint   | Description           |
-    |--------|------------|-----------------------|
-    | GET    | /hello     | Returns hello world   |
-    | POST   | /goodbye   | Says goodbye         |
+    | De | Para | Ação |
+    |----|------|------|
+    | `RECEBIDA` | `EM_DIAGNOSTICO` | Iniciar diagnóstico |
+    | `EM_DIAGNOSTICO` | `AGUARDANDO_APROVACAO` | Solicitar aprovação — envia orçamento por e-mail ao cliente |
+    | `AGUARDANDO_APROVACAO` | `APROVADA` | Cliente aprova o orçamento (total ou parcial) |
+    | `APROVADA` | `EM_EXECUCAO` | Iniciar execução dos serviços |
+    | `EM_EXECUCAO` | `FINALIZADA` | Finalizar execução — consome estoque real e libera reservas |
+    | `FINALIZADA` | `ENTREGUE` | Entregar veículo — envia nota fiscal por e-mail e limpa tagChave |
+    | `CANCELADA` | `DEVOLVIDO` | Devolver veículo fisicamente — limpa tagChave |
+    | Qualquer status até `FINALIZADA` | `CANCELADA` | Cancelar OS — libera reservas de estoque |
 
-    > Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    >
-    > Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+    > `ENTREGUE` e `DEVOLVIDO` são status terminais — nenhuma transição é permitida a partir deles.
 
-    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    ---
+
+    ## Gestão de estoque
+
+    O estoque de peças e insumos é controlado em duas camadas:
+
+    - **Estoque reservado** (`estoqueReservado`): reservado ao adicionar serviços à OS. Liberado ao cancelar ou finalizar.
+    - **Estoque real** (`estoque`): consumido definitivamente apenas na **finalização** da OS.
+
+    Ao **cancelar** uma OS, o comportamento de liberação depende do status atual:
+    - Antes de `APROVADA` (RECEBIDA, EM_DIAGNOSTICO, AGUARDANDO_APROVACAO): libera a reserva de **todos** os serviços.
+    - A partir de `APROVADA` (APROVADA, EM_EXECUCAO): libera apenas a reserva dos serviços **aprovados**.
+
+    ---
+
+    ## Aprovação do orçamento
+
+    Ao solicitar aprovação, o sistema:
+    1. Altera o status para `AGUARDANDO_APROVACAO`.
+    2. Gera o orçamento em PDF e envia ao cliente por e-mail (SMTP).
+    3. Inclui no e-mail um link com token HMAC assinado — sem necessidade de login.
+
+    O cliente seleciona os serviços que deseja aprovar e confirma. A aprovação pode ser total ou parcial.
+
+    ---
+
+    ## Recursos
+
+    | Recurso | Descrição |
+    |---------|-----------|
+    | **Ordens de Serviço** | Ciclo de vida completo da OS |
+    | **Clientes** | Cadastro e consulta de clientes |
+    | **Veículos** | Cadastro de veículos vinculados a clientes |
+    | **Peças** | Cadastro de peças com controle de estoque |
+    | **Insumos** | Cadastro de insumos com controle de estoque |
+    | **Serviços** | Catálogo de serviços oferecidos pela oficina |
+    | **Estoque** | Entrada e saída de estoque por EAN (batch) |
   version: 1.0.0
 
 servers:
@@ -37,7 +75,9 @@ paths:
         - Ordens de Serviço
       summary: Criar OS
       description: |
-        Endpoint para criar uma ordem de serviço
+        Cria uma nova OS com status inicial `RECEBIDA`.
+        Calcula automaticamente o preço total com base nos serviços desejados informados.
+        Reserva estoque das peças e insumos vinculados a cada serviço.
       operationId: post/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -94,7 +134,8 @@ paths:
         - Ordens de Serviço
       summary: Listar OS
       description: |
-        Endpoint para listagem paginada de ordens de serviço com filtros opcionais
+        Retorna uma lista paginada de ordens de serviço.
+        Filtros opcionais: `placa`, `documentoCliente`, `status`, `dataInicio`, `dataFim`.
       operationId: get/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -209,7 +250,7 @@ paths:
         - Ordens de Serviço
       summary: Consultar OS
       description: |
-        Endpoint para consulta de ordem de serviço por osId
+        Retorna os detalhes completos de uma OS, incluindo serviços, peças, insumos e histórico de status.
       operationId: get/ordensDeServico/{osId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -269,7 +310,8 @@ paths:
         - Ordens de Serviço
       summary: Diagnosticar OS
       description: |
-        Endpoint para iniciar o diagnóstico de uma ordem de serviço, alterando seu status para EM_DIAGNOSTICO
+        Inicia o diagnóstico da OS, alterando o status de `RECEBIDA` para `EM_DIAGNOSTICO`.
+        A partir deste status é possível adicionar serviços necessários e adicionais identificados pelo mecânico.
       operationId: post/ordensDeServico/{osId}/diagnosticar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -331,7 +373,9 @@ paths:
         - Ordens de Serviço
       summary: Adicionar serviços à OS
       description: |
-        Endpoint para adicionar serviços necessários e/ou adicionais a uma ordem de serviço
+        Adiciona serviços necessários e/ou adicionais à OS durante o diagnóstico (`EM_DIAGNOSTICO`).
+        Calcula o preço de cada serviço e reserva o estoque das peças e insumos envolvidos.
+        O preço total da OS é recalculado após cada adição.
       operationId: post/ordensDeServico/{osId}/adicionarServicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -536,8 +580,8 @@ paths:
         - Ordens de Serviço
       summary: Iniciar execução da OS
       description: |
-        Inicia a execução da ordem de serviço alterando seu status para EM_EXECUCAO.
-        Só é permitido a partir do status APROVADA.
+        Inicia a execução da OS, alterando o status de `APROVADA` para `EM_EXECUCAO`.
+        A partir deste ponto apenas os serviços aprovados serão executados.
       operationId: post/ordensDeServico/{osId}/executar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -595,9 +639,9 @@ paths:
         - Ordens de Serviço
       summary: Finalizar OS
       description: |
-        Finaliza a ordem de serviço alterando seu status para FINALIZADA.
-        Consome o estoque real (removerEstoque) e libera a reserva (removerEstoqueReservado) de todos os serviços aprovados.
-        Só é permitido a partir do status EM_EXECUCAO.
+        Finaliza a OS, alterando o status de `EM_EXECUCAO` para `FINALIZADA`.
+        Para cada serviço aprovado: consome o estoque real (`estoque`) e libera a reserva (`estoqueReservado`) das peças e insumos.
+        Após finalizar, a OS aguarda entrega física do veículo.
       operationId: post/ordensDeServico/{osId}/finalizar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -655,9 +699,12 @@ paths:
         - Ordens de Serviço
       summary: Cancelar OS
       description: |
-        Cancela a ordem de serviço alterando seu status para CANCELADA.
-        Para status anteriores a APROVADA (RECEBIDA, EM_DIAGNOSTICO, AGUARDANDO_APROVACAO), libera a reserva de estoque de todos os serviços.
-        Para status a partir de APROVADA (APROVADA, EM_EXECUCAO, FINALIZADA), libera apenas a reserva dos serviços aprovados.
+        Cancela a OS, alterando o status para `CANCELADA`.
+        Libera o estoque reservado de acordo com o status atual:
+        - **Antes de `APROVADA`** (RECEBIDA, EM_DIAGNOSTICO, AGUARDANDO_APROVACAO): libera a reserva de **todos** os serviços.
+        - **A partir de `APROVADA`** (APROVADA, EM_EXECUCAO): libera apenas a reserva dos serviços **aprovados**.
+
+        Para devolver o veículo fisicamente após o cancelamento, utilize o endpoint `/entregar`.
       operationId: post/ordensDeServico/{osId}/cancelar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -713,7 +760,7 @@ paths:
     post:
       tags:
         - Ordens de Serviço
-      summary: Entregar ou devolver OS
+      summary: Entregar OS
       description: |
         Dois comportamentos dependendo do status atual da OS:
         - **FINALIZADA** → altera para ENTREGUE, limpa a tagChave e envia nota fiscal por e-mail ao cliente.
@@ -777,7 +824,7 @@ paths:
         - Clientes
       summary: Criar Cliente
       description: |
-        Endpoint para criar um cliente
+        Cadastra um novo cliente. O documento (CPF ou CNPJ) deve ser único.
       operationId: post/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -834,7 +881,7 @@ paths:
         - Clientes
       summary: Listar Clientes
       description: |
-        Endpoint para listagem paginada de clientes
+        Retorna a lista paginada de clientes cadastrados.
       operationId: get/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -902,7 +949,7 @@ paths:
         - Clientes
       summary: Atualizar Cliente
       description: |
-        Endpoint para atualizar um cliente
+        Atualiza os dados cadastrais de um cliente.
       operationId: put/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -969,7 +1016,7 @@ paths:
         - Clientes
       summary: Consultar Cliente
       description: |
-        Endpoint para consulta de cliente por clienteId
+        Retorna os dados de um cliente pelo seu identificador.
       operationId: get/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1028,7 +1075,7 @@ paths:
         - Clientes
       summary: Deletar Cliente
       description: |
-        Endpoint para deleção de cliente por clienteId
+        Remove um cliente do sistema.
       operationId: delete/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1081,7 +1128,7 @@ paths:
         - Clientes
       summary: Consultar Cliente por documento
       description: |
-        Endpoint para consulta de cliente por documento
+        Retorna os dados de um cliente pelo número de CPF ou CNPJ.
       operationId: get/clientes/documento/{documento}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1142,7 +1189,7 @@ paths:
         - Veículos
       summary: Criar Veículo
       description: |
-        Endpoint para criar um veículo
+        Cadastra um novo veículo vinculado a um cliente. A placa deve ser única.
       operationId: post/veiculos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1199,7 +1246,7 @@ paths:
         - Veículos
       summary: Listar Veículos
       description: |
-        Endpoint para listagem paginada de Veículos
+        Retorna a lista de veículos cadastrados, com filtro opcional por cliente.
       operationId: get/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1267,7 +1314,7 @@ paths:
         - Veículos
       summary: Atualizar Veículo
       description: |
-        Endpoint para atualizar um veículo
+        Atualiza os dados cadastrais de um veículo.
       operationId: put/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1334,7 +1381,7 @@ paths:
         - Veículos
       summary: Consultar Veículo
       description: |
-        Endpoint para consulta de veículos por veiculoId
+        Retorna os dados de um veículo pelo seu identificador.
       operationId: get/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1393,7 +1440,7 @@ paths:
         - Veículos
       summary: Deletar Veículo
       description: |
-        Endpoint para deleção de um veículo por veiculoId
+        Remove um veículo do sistema.
       operationId: delete/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1446,7 +1493,7 @@ paths:
         - Veículos
       summary: Consultar Veículo por placa
       description: |
-        Endpoint para consulta de veículos por placa
+        Retorna os dados de um veículo pela placa.
       operationId: get /veiculos/placa/{placa}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1507,7 +1554,7 @@ paths:
         - Peças
       summary: Criar Peça
       description: |
-        Endpoint para criar uma peça
+        Cadastra uma nova peça no catálogo. `sku` e `ean` devem ser únicos.
       operationId: post/produtos/pecas
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1565,7 +1612,7 @@ paths:
         - Peças
       summary: Atualizar Peça
       description: |
-        Endpoint para atualizar uma peça
+        Atualiza os dados cadastrais de uma peça. `sku` e `ean` devem permanecer únicos.
       operationId: put/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1632,7 +1679,7 @@ paths:
         - Peças
       summary: Consultar Peça
       description: |
-        Endpoint para consulta de peça por peçaId
+        Retorna os dados de uma peça incluindo estoque atual, estoque reservado e aplicações de veículo.
       operationId: get/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1691,7 +1738,7 @@ paths:
         - Peças
       summary: Deletar Peça
       description: |
-        Endpoint para deleção de peça por pecaId
+        Remove uma peça do catálogo. Não é permitido remover peças vinculadas a ordens de serviço ativas.
       operationId: delete/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1745,7 +1792,7 @@ paths:
         - Insumos
       summary: Criar Insumo
       description: |
-        Endpoint para criar um insumo
+        Cadastra um novo insumo no catálogo. `sku` e `ean` devem ser únicos.
       operationId: post/produtos/insumos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1803,7 +1850,7 @@ paths:
         - Insumos
       summary: Atualizar Insumo
       description: |
-        Endpoint para atualizar um insumo
+        Atualiza os dados cadastrais de um insumo. `sku` e `ean` devem permanecer únicos.
       operationId: put/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1870,7 +1917,7 @@ paths:
         - Insumos
       summary: Consultar Insumo
       description: |
-        Endpoint para consulta de insumo por insumoId
+        Retorna os dados de um insumo incluindo estoque atual, estoque reservado e aplicações de veículo.
       operationId: get/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -1929,7 +1976,7 @@ paths:
         - Insumos
       summary: Deletar Insumo
       description: |
-        Endpoint para deleção de insumo por insumoId
+        Remove um insumo do catálogo. Não é permitido remover insumos vinculados a ordens de serviço ativas.
       operationId: delete/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -2106,7 +2153,7 @@ paths:
         - Serviços
       summary: Criar Serviço
       description: |
-        Endpoint para criar um serviço
+        Cadastra um novo serviço no catálogo, com suas horas técnicas e peças/insumos necessários por tipo de veículo.
       operationId: post/servicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -2163,7 +2210,7 @@ paths:
         - Serviços
       summary: Listar Serviços
       description: |
-        Endpoint para listagem paginada de serviços
+        Retorna a lista completa de serviços cadastrados no catálogo.
       operationId: get/servicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -2231,7 +2278,7 @@ paths:
         - Serviços
       summary: Atualizar Serviço
       description: |
-        Endpoint para atualizar um serviço
+        Atualiza os dados de um serviço, incluindo horas técnicas e peças/insumos por tipo de veículo.
       operationId: put/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -2298,7 +2345,7 @@ paths:
         - Serviços
       summary: Consultar Serviço
       description: |
-        Endpoint para consulta de serviço por servicoId
+        Retorna os dados de um serviço incluindo as peças e insumos necessários por tipo de veículo.
       operationId: get/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -2357,7 +2404,7 @@ paths:
         - Serviços
       summary: Deletar Serviço
       description: |
-        Endpoint para deleção de serviço por servicoId
+        Remove um serviço do catálogo.
       operationId: delete/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
