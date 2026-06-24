@@ -51,6 +51,7 @@ properties:
     type: number
     format: decimal
     description: Preço total da OS
+  precoServicosDesejados:
     type: number
     format: decimal
     description: Preço total dos serviços desejados
