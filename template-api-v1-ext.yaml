@@ -709,6 +709,68 @@ paths:
           integration.request.path.osId: "method.request.path.osId"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
+  /ordensDeServico/{osId}/entregar:
+    post:
+      tags:
+        - Ordens de Serviço
+      summary: Entregar ou devolver OS
+      description: |
+        Dois comportamentos dependendo do status atual da OS:
+        - **FINALIZADA** → altera para ENTREGUE, limpa a tagChave e envia nota fiscal por e-mail ao cliente.
+        - **CANCELADA** → altera para DEVOLVIDO e limpa a tagChave. Nenhum e-mail é enviado.
+      operationId: post/ordensDeServico/{osId}/entregar
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: osId
+          in: path
+          description: Identificador da ordem de serviço
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Veículo entregue ou devolvido com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntregarOSResponse"
+              examples:
+                EntregarOSEntregueResponse:
+                  $ref: "#/components/examples/EntregarOSEntregueResponse"
+                EntregarOSDevolvidoResponse:
+                  $ref: "#/components/examples/EntregarOSDevolvidoResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "POST"
+        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/entregar"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.osId: "method.request.path.osId"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
   /clientes:
     post:
       tags:
@@ -2307,6 +2369,8 @@ components:
       $ref: ./schemas/ExecuteOSResponse.yaml
     FinalizeOSResponse:
       $ref: ./schemas/FinalizeOSResponse.yaml
+    EntregarOSResponse:
+      $ref: ./schemas/EntregarOSResponse.yaml
   examples:
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
@@ -2396,6 +2460,10 @@ components:
       $ref: ./examples/200ExecuteOSResponse.yaml
     FinalizeOSResponse:
       $ref: ./examples/200FinalizeOSResponse.yaml
+    EntregarOSEntregueResponse:
+      $ref: ./examples/200EntregarOSEntregueResponse.yaml
+    EntregarOSDevolvidoResponse:
+      $ref: ./examples/200EntregarOSDevolvidoResponse.yaml
 
   responses:
     '204':

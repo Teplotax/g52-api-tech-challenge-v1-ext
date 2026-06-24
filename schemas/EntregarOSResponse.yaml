@@ -1,0 +1,67 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Identificador da OS
+  status:
+    type: string
+    description: Status atual da OS
+    enum:
+      - RECEBIDA
+      - EM_DIAGNOSTICO
+      - AGUARDANDO_APROVACAO
+      - APROVADA
+      - EM_EXECUCAO
+      - FINALIZADA
+      - ENTREGUE
+      - CANCELADA
+      - DEVOLVIDO
+  clienteId:
+    type: integer
+    format: int64
+    description: Identificador do cliente
+  clienteNomeSocial:
+    type: string
+    description: Nome social do cliente
+  clienteDocumento:
+    type: string
+    description: Documento do cliente
+  veiculoId:
+    type: integer
+    format: int64
+    description: Identificador do veículo
+  veiculoPlaca:
+    type: string
+    description: Placa do veículo
+  complexidade:
+    type: string
+    description: Complexidade da OS
+  sintomas:
+    type: string
+    description: Descrição dos sintomas
+  tagChave:
+    type: string
+    nullable: true
+    description: Tag chave da OS. Sempre null após entrega ou devolução.
+  criadaEm:
+    type: string
+    format: date-time
+    description: Data e hora de criação da OS
+  precoTotal:
+    type: number
+    format: decimal
+    description: Preço total da OS
+  historico:
+    type: array
+    description: Histórico de mudanças de status
+    items:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status registrado
+        createdAt:
+          type: string
+          format: date-time
+          description: Data e hora do registro
