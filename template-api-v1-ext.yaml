@@ -81,6 +81,7 @@ paths:
       operationId: post/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -111,6 +112,10 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
+        "422":
+          $ref: "#/components/responses/422"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -139,6 +144,7 @@ paths:
       operationId: get/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: placa
           in: query
           description: Placa do veículo para filtrar
@@ -211,8 +217,6 @@ paths:
           $ref: "#/components/responses/401"
         "403":
           $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
         "405":
           $ref: "#/components/responses/405"
         "500":
@@ -254,6 +258,7 @@ paths:
       operationId: get/ordensDeServico/{osId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -315,6 +320,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/diagnosticar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -379,6 +385,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/adicionarServicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -450,6 +457,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/solicitarAprovacao
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -585,6 +593,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/executar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -645,6 +654,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/finalizar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -708,6 +718,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/cancelar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -768,6 +779,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/entregar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -828,6 +840,7 @@ paths:
       operationId: post/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -858,6 +871,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -885,6 +900,7 @@ paths:
       operationId: get/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: page
           in: query
           description: Número da página
@@ -953,6 +969,7 @@ paths:
       operationId: put/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: clienteId
           in: path
           description: Identificador do cliente
@@ -992,6 +1009,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1020,6 +1039,7 @@ paths:
       operationId: get/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: clienteId
           in: path
           description: Identificador do cliente
@@ -1079,6 +1099,7 @@ paths:
       operationId: delete/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: clienteId
           in: path
           description: Identificador do cliente
@@ -1103,6 +1124,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "422":
+          $ref: "#/components/responses/422"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1132,6 +1155,7 @@ paths:
       operationId: get/clientes/documento/{documento}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: documento
           in: path
           description: Número do documento de identificação
@@ -1193,6 +1217,7 @@ paths:
       operationId: post/veiculos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -1223,6 +1248,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1250,6 +1277,7 @@ paths:
       operationId: get/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: page
           in: query
           description: Número da página
@@ -1280,8 +1308,6 @@ paths:
           $ref: "#/components/responses/401"
         "403":
           $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
         "405":
           $ref: "#/components/responses/405"
         "500":
@@ -1318,6 +1344,7 @@ paths:
       operationId: put/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: veiculoId
           in: path
           description: Identificador do veículo
@@ -1357,6 +1384,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1385,6 +1414,7 @@ paths:
       operationId: get/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: veiculoId
           in: path
           description: Identificador do veículo
@@ -1444,6 +1474,7 @@ paths:
       operationId: delete/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: veiculoId
           in: path
           description: Identificador do veículo
@@ -1468,6 +1499,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "422":
+          $ref: "#/components/responses/422"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1497,6 +1530,7 @@ paths:
       operationId: get /veiculos/placa/{placa}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: placa
           in: path
           description: Placa do veículo
@@ -1558,6 +1592,7 @@ paths:
       operationId: post/produtos/pecas
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -1588,6 +1623,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1616,6 +1653,7 @@ paths:
       operationId: put/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: pecaId
           in: path
           description: Identificador da peça
@@ -1655,6 +1693,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1683,6 +1723,7 @@ paths:
       operationId: get/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: pecaId
           in: path
           description: Identificador da peça
@@ -1742,6 +1783,7 @@ paths:
       operationId: delete/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: pecaId
           in: path
           description: Identificador da peça
@@ -1766,6 +1808,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "422":
+          $ref: "#/components/responses/422"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1796,6 +1840,7 @@ paths:
       operationId: post/produtos/insumos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -1826,6 +1871,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1854,6 +1901,7 @@ paths:
       operationId: put/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: insumoId
           in: path
           description: Identificador do insumo
@@ -1893,6 +1941,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -1921,6 +1971,7 @@ paths:
       operationId: get/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: insumoId
           in: path
           description: Identificador do insumo
@@ -1980,6 +2031,7 @@ paths:
       operationId: delete/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: insumoId
           in: path
           description: Identificador do insumo
@@ -2004,6 +2056,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "422":
+          $ref: "#/components/responses/422"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -2024,6 +2078,62 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
+  /produtos/ean/{ean}:
+    get:
+      tags:
+        - Produtos
+      summary: Consultar produto por EAN
+      description: |
+        Retorna os dados de um produto pelo código EAN. Funciona para peças e insumos.
+      operationId: get/produtos/ean/{ean}
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - name: ean
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Código EAN do produto
+      responses:
+        "200":
+          description: Produto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindProdutoByEanResponse"
+              examples:
+                FindProdutoByEanResponse:
+                  $ref: "#/components/examples/FindProdutoByEanResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        uri: "http://${loadBalancerDnsMain}/produtos/ean/{ean}"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${vpclink}"
+        requestParameters:
+          integration.request.path.ean: "method.request.path.ean"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
   /produtos/estoque/entrada:
     post:
       tags:
@@ -2035,6 +2145,7 @@ paths:
       operationId: post/produtos/estoque/entrada
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         required: true
         content:
@@ -2097,6 +2208,7 @@ paths:
       operationId: post/produtos/estoque/saida
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         required: true
         content:
@@ -2157,6 +2269,7 @@ paths:
       operationId: post/servicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -2187,6 +2300,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -2214,6 +2329,7 @@ paths:
       operationId: get/servicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: page
           in: query
           description: Número da página
@@ -2244,8 +2360,6 @@ paths:
           $ref: "#/components/responses/401"
         "403":
           $ref: "#/components/responses/403"
-        "404":
-          $ref: "#/components/responses/404"
         "405":
           $ref: "#/components/responses/405"
         "500":
@@ -2282,6 +2396,7 @@ paths:
       operationId: put/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: servicoId
           in: path
           description: Identificador do serviço
@@ -2321,6 +2436,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "409":
+          $ref: "#/components/responses/409"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -2349,6 +2466,7 @@ paths:
       operationId: get/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: servicoId
           in: path
           description: Identificador do serviço
@@ -2408,6 +2526,7 @@ paths:
       operationId: delete/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: servicoId
           in: path
           description: Identificador do serviço
@@ -2432,6 +2551,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+        "422":
+          $ref: "#/components/responses/422"
       #      security:
       #        - APIGatewaySTSAuthorizer:
       #            - none
@@ -2456,6 +2577,8 @@ components:
   parameters:
     x_correlationid:
       $ref: ./parameters/x_correlationid.yaml
+    authorization:
+      $ref: ./parameters/authorization.yaml
   schemas:
     FindClienteResponse:
       $ref: ./schemas/FindClienteResponse.yaml
@@ -2503,6 +2626,8 @@ components:
       $ref: ./schemas/UpdateInsumoResponse.yaml
     EstoqueMovimentacaoRequest:
       $ref: ./schemas/EstoqueMovimentacaoRequest.yaml
+    FindProdutoByEanResponse:
+      $ref: ./schemas/FindProdutoByEanResponse.yaml
     EstoqueMovimentacaoResponse:
       $ref: ./schemas/EstoqueMovimentacaoResponse.yaml
     CreateServicoRequest:
@@ -2596,6 +2721,8 @@ components:
       $ref: ./examples/requests/EstoqueMovimentacaoRequest.yaml
     EstoqueEntradaResponse:
       $ref: ./examples/200EstoqueEntradaResponse.yaml
+    FindProdutoByEanResponse:
+      $ref: ./examples/200FindProdutoByEanResponse.yaml
     EstoqueSaidaResponse:
       $ref: ./examples/200EstoqueSaidaResponse.yaml
 
@@ -2656,6 +2783,8 @@ components:
       $ref: ./responses/403.yaml
     '404':
       $ref: ./responses/404.yaml
+    '409':
+      $ref: ./responses/409.yaml
     '405':
       $ref: ./responses/405.yaml
     '422':
