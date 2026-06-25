@@ -1,0 +1,3 @@
+value:
+  message: "Já existe um registro com os dados informados"
+  exceptionType: "Conflict"
