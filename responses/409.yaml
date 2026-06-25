@@ -1,0 +1,8 @@
+description: Conflict
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ErrorMessage.yaml'
+    examples:
+      '409':
+        $ref: '../examples/409.yaml'

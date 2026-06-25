@@ -1,0 +1,10 @@
+value:
+  id: 1
+  sku: "SKU-001"
+  ean: "7891342010177"
+  nome: "Filtro de Óleo Motor Universal"
+  tipoProduto: "PECA"
+  preco: 32.90
+  estoque: 100
+  estoqueReservado: 10
+  estoqueMinimo: 5
