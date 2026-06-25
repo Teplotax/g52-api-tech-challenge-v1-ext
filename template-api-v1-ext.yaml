@@ -81,6 +81,7 @@ paths:
       operationId: post/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -139,6 +140,7 @@ paths:
       operationId: get/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: placa
           in: query
           description: Placa do veículo para filtrar
@@ -254,6 +256,7 @@ paths:
       operationId: get/ordensDeServico/{osId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -315,6 +318,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/diagnosticar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -379,6 +383,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/adicionarServicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -450,6 +455,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/solicitarAprovacao
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -585,6 +591,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/executar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -645,6 +652,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/finalizar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -708,6 +716,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/cancelar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -768,6 +777,7 @@ paths:
       operationId: post/ordensDeServico/{osId}/entregar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: osId
           in: path
           description: Identificador da ordem de serviço
@@ -828,6 +838,7 @@ paths:
       operationId: post/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -885,6 +896,7 @@ paths:
       operationId: get/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: page
           in: query
           description: Número da página
@@ -953,6 +965,7 @@ paths:
       operationId: put/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: clienteId
           in: path
           description: Identificador do cliente
@@ -1020,6 +1033,7 @@ paths:
       operationId: get/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: clienteId
           in: path
           description: Identificador do cliente
@@ -1079,6 +1093,7 @@ paths:
       operationId: delete/clientes/{clienteId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: clienteId
           in: path
           description: Identificador do cliente
@@ -1132,6 +1147,7 @@ paths:
       operationId: get/clientes/documento/{documento}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: documento
           in: path
           description: Número do documento de identificação
@@ -1193,6 +1209,7 @@ paths:
       operationId: post/veiculos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -1250,6 +1267,7 @@ paths:
       operationId: get/clientes
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: page
           in: query
           description: Número da página
@@ -1318,6 +1336,7 @@ paths:
       operationId: put/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: veiculoId
           in: path
           description: Identificador do veículo
@@ -1385,6 +1404,7 @@ paths:
       operationId: get/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: veiculoId
           in: path
           description: Identificador do veículo
@@ -1444,6 +1464,7 @@ paths:
       operationId: delete/veiculos/{veiculoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: veiculoId
           in: path
           description: Identificador do veículo
@@ -1497,6 +1518,7 @@ paths:
       operationId: get /veiculos/placa/{placa}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: placa
           in: path
           description: Placa do veículo
@@ -1558,6 +1580,7 @@ paths:
       operationId: post/produtos/pecas
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -1616,6 +1639,7 @@ paths:
       operationId: put/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: pecaId
           in: path
           description: Identificador da peça
@@ -1683,6 +1707,7 @@ paths:
       operationId: get/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: pecaId
           in: path
           description: Identificador da peça
@@ -1742,6 +1767,7 @@ paths:
       operationId: delete/produtos/pecas/{pecaId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: pecaId
           in: path
           description: Identificador da peça
@@ -1796,6 +1822,7 @@ paths:
       operationId: post/produtos/insumos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -1854,6 +1881,7 @@ paths:
       operationId: put/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: insumoId
           in: path
           description: Identificador do insumo
@@ -1921,6 +1949,7 @@ paths:
       operationId: get/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: insumoId
           in: path
           description: Identificador do insumo
@@ -1980,6 +2009,7 @@ paths:
       operationId: delete/produtos/insumos/{insumoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: insumoId
           in: path
           description: Identificador do insumo
@@ -2035,6 +2065,7 @@ paths:
       operationId: post/produtos/estoque/entrada
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         required: true
         content:
@@ -2097,6 +2128,7 @@ paths:
       operationId: post/produtos/estoque/saida
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         required: true
         content:
@@ -2157,6 +2189,7 @@ paths:
       operationId: post/servicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
       requestBody:
         content:
           application/json:
@@ -2214,6 +2247,7 @@ paths:
       operationId: get/servicos
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: page
           in: query
           description: Número da página
@@ -2282,6 +2316,7 @@ paths:
       operationId: put/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: servicoId
           in: path
           description: Identificador do serviço
@@ -2349,6 +2384,7 @@ paths:
       operationId: get/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: servicoId
           in: path
           description: Identificador do serviço
@@ -2408,6 +2444,7 @@ paths:
       operationId: delete/servicos/{servicoId}
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
         - name: servicoId
           in: path
           description: Identificador do serviço
@@ -2456,6 +2493,8 @@ components:
   parameters:
     x_correlationid:
       $ref: ./parameters/x_correlationid.yaml
+    authorization:
+      $ref: ./parameters/authorization.yaml
   schemas:
     FindClienteResponse:
       $ref: ./schemas/FindClienteResponse.yaml
