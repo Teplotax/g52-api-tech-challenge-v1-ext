@@ -1,17 +1,12 @@
 type: object
 required:
-  - clienteId
-  - veiculoId
+  - placa
+  - tagChave
   - servicosDesejados
 properties:
-  clienteId:
-    type: integer
-    format: int64
-    description: Identificador do cliente
-  veiculoId:
-    type: integer
-    format: int64
-    description: Identificador do veículo
+  placa:
+    type: string
+    description: Placa do veículo
   sintomas:
     type: string
     description: Descrição dos sintomas relatados
