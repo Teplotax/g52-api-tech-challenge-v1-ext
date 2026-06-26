@@ -2,6 +2,12 @@
 
 Esse repo guarda o contrato OpenAPI da API do G52 | Tech Challenge — é o que vira a especificação importada no API Gateway da AWS (por isso o `-ext`, de extensions do `x-amazon-apigateway-integration`).
 
+## Documentação da API
+
+A especificação Swagger/OpenAPI é mantida no repositório [`doc-api-tech-challenge-v1`](https://github.com/Teplotax/doc-api-tech-challenge-v1) e publicada via **GitHub Pages**:
+
+👉 https://teplotax.github.io/doc-api-tech-challenge-v1/
+
 ## Sobre a API
 
 API de gerenciamento de ordens de serviço para oficinas mecânicas. Permite controlar o ciclo de vida completo de uma OS — desde a abertura até a entrega do veículo — além de gerenciar clientes, veículos, peças, insumos e serviços cadastrados.
@@ -46,11 +52,9 @@ Ao solicitar aprovação, o sistema muda o status pra `AGUARDANDO_APROVACAO`, ge
 | **Serviços** | Catálogo de serviços oferecidos pela oficina |
 | **Estoque** | Entrada e saída de estoque por EAN (batch) |
 
-A doc publicada (Swagger via GitHub Pages) fica no repo [`doc-api-tech-challenge-v1`](https://github.com/Teplotax/doc-api-tech-challenge-v1).
-
 ## Estrutura do repo
 
-- `g52-api-tech-challenge-v1-ext.yaml`: arquivo principal do contrato (OpenAPI 3.0)
+- `template-api-v1-ext.yaml`: arquivo principal do contrato (OpenAPI 3.0)
 - `schemas/`, `responses/`, `examples/`, `parameters/`: pedaços reaproveitáveis referenciados via `$ref` no template
 - `infra/`: Terraform que importa o spec resolvido no API Gateway (REST API já existente, gerenciada no repo de infra)
 
