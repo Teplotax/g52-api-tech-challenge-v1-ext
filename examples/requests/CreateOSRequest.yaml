@@ -1,6 +1,5 @@
 value:
-  clienteId: 1
-  veiculoId: 1
+  placa: ABC1D23
   sintomas: Barulho ao frear e vibração no volante em altas velocidades
   tagChave: "001"
   servicosDesejados:
