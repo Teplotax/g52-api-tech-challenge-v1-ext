@@ -140,7 +140,7 @@ paths:
       summary: Listar OS
       description: |
         Retorna uma lista paginada de ordens de serviço.
-        Filtros opcionais: `placa`, `documentoCliente`, `status`, `dataInicio`, `dataFim`.
+        Filtros opcionais: `placa`, `documentoCliente`, `status`, `complexidade`, `dataInicio`, `dataFim`.
       operationId: get/ordensDeServico
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -173,6 +173,16 @@ paths:
               - ENTREGUE
               - CANCELADA
               - DEVOLVIDO
+        - name: complexidade
+          in: query
+          description: Complexidade da OS para filtrar
+          required: false
+          schema:
+            type: string
+            enum:
+              - BAIXA
+              - MEDIA
+              - ALTA
         - name: dataInicio
           in: query
           description: Data de início do range (ex. 2026-06-19)
@@ -242,6 +252,7 @@ paths:
           integration.request.querystring.placa: "method.request.querystring.placa"
           integration.request.querystring.documentoCliente: "method.request.querystring.documentoCliente"
           integration.request.querystring.status: "method.request.querystring.status"
+          integration.request.querystring.complexidade: "method.request.querystring.complexidade"
           integration.request.querystring.dataInicio: "method.request.querystring.dataInicio"
           integration.request.querystring.dataFim: "method.request.querystring.dataFim"
           integration.request.querystring.page: "method.request.querystring.page"
