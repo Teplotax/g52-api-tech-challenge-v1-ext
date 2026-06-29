@@ -1,5 +1,9 @@
 type: object
 properties:
+  id:
+    type: integer
+    description: Identificador do cliente
+
   nomeSocial:
     type: string
     description: Nome pelo qual o cliente deseja ser identificado e tratado no convívio social, ou nome fantasia
