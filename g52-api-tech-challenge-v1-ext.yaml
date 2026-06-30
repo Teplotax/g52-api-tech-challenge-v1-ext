@@ -3,7 +3,7 @@ info:
   title: API G52 Tech Challenge
   description: |
     API de gerenciamento de ordens de serviço para oficinas mecânicas. Permite controlar o ciclo de vida
-    completo de uma OS — desde a abertura até a entrega do veículo — além de gerenciar clientes, veículos,
+    completo de uma OS, desde a abertura até a entrega do veículo, além de gerenciar clientes, veículos,
     peças, insumos e serviços cadastrados.
 
     ---
@@ -15,15 +15,15 @@ info:
     | De | Para | Ação |
     |----|------|------|
     | `RECEBIDA` | `EM_DIAGNOSTICO` | Iniciar diagnóstico |
-    | `EM_DIAGNOSTICO` | `AGUARDANDO_APROVACAO` | Solicitar aprovação — envia orçamento por e-mail ao cliente |
+    | `EM_DIAGNOSTICO` | `AGUARDANDO_APROVACAO` | Solicitar aprovação: envia orçamento por e-mail ao cliente |
     | `AGUARDANDO_APROVACAO` | `APROVADA` | Cliente aprova o orçamento (total ou parcial) |
     | `APROVADA` | `EM_EXECUCAO` | Iniciar execução dos serviços |
-    | `EM_EXECUCAO` | `FINALIZADA` | Finalizar execução — consome estoque real e libera reservas |
-    | `FINALIZADA` | `ENTREGUE` | Entregar veículo — envia nota fiscal por e-mail e limpa tagChave |
-    | `CANCELADA` | `DEVOLVIDO` | Devolver veículo fisicamente — limpa tagChave |
-    | Qualquer status até `FINALIZADA` | `CANCELADA` | Cancelar OS — libera reservas de estoque |
+    | `EM_EXECUCAO` | `FINALIZADA` | Finalizar execução: consome estoque real e libera reservas |
+    | `FINALIZADA` | `ENTREGUE` | Entregar veículo: envia nota fiscal por e-mail e limpa tagChave |
+    | `CANCELADA` | `DEVOLVIDO` | Devolver veículo fisicamente: limpa tagChave |
+    | Qualquer status até `FINALIZADA` | `CANCELADA` | Cancelar OS: libera reservas de estoque |
 
-    > `ENTREGUE` e `DEVOLVIDO` são status terminais — nenhuma transição é permitida a partir deles.
+    > `ENTREGUE` e `DEVOLVIDO` são status terminais, nenhuma transição é permitida a partir deles.
 
     ---
 
@@ -45,7 +45,7 @@ info:
     Ao solicitar aprovação, o sistema:
     1. Altera o status para `AGUARDANDO_APROVACAO`.
     2. Gera o orçamento em PDF e envia ao cliente por e-mail (SMTP).
-    3. Inclui no e-mail um link com token HMAC assinado — sem necessidade de login.
+    3. Inclui no e-mail um link com token HMAC assinado, sem necessidade de login.
 
     O cliente seleciona os serviços que deseja aprovar e confirma. A aprovação pode ser total ou parcial.
 
