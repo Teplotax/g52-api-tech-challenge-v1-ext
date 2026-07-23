@@ -12,6 +12,7 @@ properties:
       - EM_DIAGNOSTICO
       - AGUARDANDO_APROVACAO
       - APROVADA
+      - AGUARDANDO_AQUISICAO
       - EM_EXECUCAO
       - FINALIZADA
       - ENTREGUE

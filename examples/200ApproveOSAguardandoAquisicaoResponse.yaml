@@ -1,0 +1,79 @@
+value:
+  id: 1
+  status: AGUARDANDO_AQUISICAO
+  clienteId: 1
+  clienteNomeSocial: João Silva
+  clienteDocumento: 123.456.789-00
+  veiculoId: 1
+  veiculoPlaca: ABC1D23
+  complexidade: MEDIA
+  sintomas: Barulho ao frear e vibração no volante em altas velocidades
+  tagChave: "001"
+  criadaEm: "2024-06-01T10:00:00"
+  precoTotal: 810.00
+  precoTotalAprovado: 810.00
+  precoServicosDesejados: 485.00
+  precoServicosNecessarios: 280.00
+  precoServicosAdicionais: 45.00
+  justificativaNecessarios: Identificado desgaste excessivo no disco de freio durante o diagnóstico
+  justificativaAdicionais: Mecânico identificou lâmpada do farol direito queimada durante o diagnóstico
+  servicosDesejados:
+    - id: 1
+      servico: Revisão de freios
+      aprovado: true
+      precoTotal: 320.00
+      precoHorasTecnicas: 120.00
+      pecas:
+        - peca: Pastilha de freio dianteira
+          ean: 7891234560001
+          quantidade: 4
+          precoUnitario: 35.00
+          precoTotal: 140.00
+      insumos:
+        - insumo: Fluido de freio DOT 4
+          ean: 7891234560010
+          quantidade: 1
+          precoUnitario: 25.00
+          precoTotal: 25.00
+    - id: 2
+      servico: Balanceamento de rodas
+      aprovado: true
+      precoTotal: 165.00
+      precoHorasTecnicas: 80.00
+      pecas: []
+      insumos: []
+  servicosNecessarios:
+    - id: 3
+      servico: Troca de disco de freio
+      aprovado: true
+      precoTotal: 280.00
+      precoHorasTecnicas: 100.00
+      pecas:
+        - peca: Disco de freio dianteiro
+          ean: 7891234560020
+          quantidade: 2
+          precoUnitario: 90.00
+          precoTotal: 180.00
+      insumos: []
+  servicosAdicionais:
+    - id: 4
+      servico: Troca de lâmpada do farol
+      aprovado: true
+      precoTotal: 45.00
+      precoHorasTecnicas: 21.00
+      pecas:
+        - peca: Lâmpada de Farol H7 Luz Baixa
+          ean: 7891342130177
+          quantidade: 1
+          precoUnitario: 24.00
+          precoTotal: 24.00
+      insumos: []
+  historico:
+    - status: RECEBIDA
+      createdAt: "2024-06-01T10:00:00"
+    - status: EM_DIAGNOSTICO
+      createdAt: "2024-06-01T11:30:00"
+    - status: AGUARDANDO_APROVACAO
+      createdAt: "2024-06-01T14:00:00"
+    - status: AGUARDANDO_AQUISICAO
+      createdAt: "2024-06-01T15:30:00"
