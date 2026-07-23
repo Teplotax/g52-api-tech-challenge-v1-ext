@@ -16,7 +16,9 @@ info:
     |----|------|------|
     | `RECEBIDA` | `EM_DIAGNOSTICO` | Iniciar diagnóstico |
     | `EM_DIAGNOSTICO` | `AGUARDANDO_APROVACAO` | Solicitar aprovação: envia orçamento por e-mail ao cliente |
-    | `AGUARDANDO_APROVACAO` | `APROVADA` | Cliente aprova o orçamento (total ou parcial) |
+    | `AGUARDANDO_APROVACAO` | `APROVADA` | Cliente aprova o orçamento (total ou parcial) e há estoque reservado para todos os itens aprovados |
+    | `AGUARDANDO_APROVACAO` | `AGUARDANDO_AQUISICAO` | Cliente aprova, mas algum item aprovado não pôde ser reservado por falta de estoque: envia e-mail ao almoxarifado |
+    | `AGUARDANDO_AQUISICAO` | `APROVADA` | Almoxarifado confirma a aquisição dos itens em falta: repõe o estoque e reserva os itens pendentes |
     | `APROVADA` | `EM_EXECUCAO` | Iniciar execução dos serviços |
     | `EM_EXECUCAO` | `FINALIZADA` | Finalizar execução: consome estoque real e libera reservas |
     | `FINALIZADA` | `ENTREGUE` | Entregar veículo: envia nota fiscal por e-mail e limpa tagChave |
@@ -34,9 +36,14 @@ info:
     - **Estoque reservado** (`estoqueReservado`): reservado ao adicionar serviços à OS. Liberado ao cancelar ou finalizar.
     - **Estoque real** (`estoque`): consumido definitivamente apenas na **finalização** da OS.
 
+    Se, no momento da aprovação, algum item aprovado não tiver estoque disponível suficiente, a OS não avança para
+    `APROVADA` e sim para `AGUARDANDO_AQUISICAO`. Um e-mail é enviado ao almoxarifado (`almoxarifado@teplocar.com.br`)
+    listando os itens e quantidades a adquirir, com um link para confirmar a aquisição. Ao confirmar, o estoque é
+    reposto, os itens ficam reservados e a OS avança para `APROVADA`.
+
     Ao **cancelar** uma OS, o comportamento de liberação depende do status atual:
     - Antes de `APROVADA` (RECEBIDA, EM_DIAGNOSTICO, AGUARDANDO_APROVACAO): libera a reserva de **todos** os serviços.
-    - A partir de `APROVADA` (APROVADA, EM_EXECUCAO): libera apenas a reserva dos serviços **aprovados**.
+    - A partir de `APROVADA` (APROVADA, AGUARDANDO_AQUISICAO, EM_EXECUCAO): libera apenas a reserva dos serviços **aprovados** que já estavam reservados.
 
     ---
 
@@ -62,7 +69,7 @@ info:
     | **Insumos** | Cadastro de insumos com controle de estoque |
     | **Serviços** | Catálogo de serviços oferecidos pela oficina |
     | **Estoque** | Entrada e saída de estoque por EAN (batch) |
-  version: 1.0.0
+  version: 1.1.0
 
 servers:
   - url: https://api.example.com/v1
@@ -168,6 +175,7 @@ paths:
               - EM_DIAGNOSTICO
               - AGUARDANDO_APROVACAO
               - APROVADA
+              - AGUARDANDO_AQUISICAO
               - EM_EXECUCAO
               - FINALIZADA
               - ENTREGUE
@@ -523,9 +531,15 @@ paths:
         - Ordens de Serviço
       summary: Aprovar OS
       description: |
-        Aprova a ordem de serviço alterando seu status para APROVADA.
+        Aprova a ordem de serviço.
         Se o corpo da requisição contiver uma lista de IDs em `servicosAprovados`, apenas esses serviços serão aprovados (aprovação parcial).
         Se o corpo for omitido ou a lista estiver vazia, todos os serviços serão aprovados.
+
+        O status resultante depende do estoque das peças e insumos dos serviços aprovados:
+        - Se todos os itens necessários estiverem reservados, o status muda para `APROVADA`.
+        - Se algum item não pôde ser reservado por falta de estoque, o status muda para `AGUARDANDO_AQUISICAO` e um e-mail é
+          enviado ao almoxarifado (`almoxarifado@teplocar.com.br`) listando os itens e quantidades a adquirir, com um link
+          para confirmar a aquisição. Ao confirmar, o estoque é reposto, os itens são reservados e a OS avança para `APROVADA`.
       operationId: post/ordensDeServico/{osId}/aprovar
       parameters:
         - $ref: "#/components/parameters/x_correlationid"
@@ -557,6 +571,8 @@ paths:
                   $ref: "#/components/examples/ApproveOSResponse"
                 ApproveOSParcialResponse:
                   $ref: "#/components/examples/ApproveOSParcialResponse"
+                ApproveOSAguardandoAquisicaoResponse:
+                  $ref: "#/components/examples/ApproveOSAguardandoAquisicaoResponse"
         "400":
           $ref: "#/components/responses/400"
         "401":
@@ -2768,6 +2784,8 @@ components:
       $ref: ./examples/200ApproveOSResponse.yaml
     ApproveOSParcialResponse:
       $ref: ./examples/200ApproveOSParcialResponse.yaml
+    ApproveOSAguardandoAquisicaoResponse:
+      $ref: ./examples/200ApproveOSAguardandoAquisicaoResponse.yaml
     ApproveOSRequest:
       $ref: ./examples/requests/ApproveOSRequest.yaml
     RequestApprovalResponse:
