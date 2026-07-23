@@ -6,8 +6,7 @@ deploy:
     dev:
       account: "403339561517"
       apigateway:
-        apigatewayId: "qb4fdcj5xg"
-      vpclink: "txypyt"
+        apigatewayId: "olq0pyde45"
       loadBalancerDnsMain: "tech-challenge-lb-f602dac972c5f268.elb.sa-east-1.amazonaws.com:8080"
 
 infra:
