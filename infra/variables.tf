@@ -10,10 +10,6 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "vpclink" {
-  type        = string
-}
-
 variable "apigateway_id" {
   type        = string
 }
