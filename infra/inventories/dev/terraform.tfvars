@@ -6,4 +6,4 @@ apigateway_id       = "gw2hh381ck"
 loadBalancerDnsMain = "tech-challenge-lb-ab041078c8d35bb0.elb.sa-east-1.amazonaws.com:8080"
 log_retention_days  = 1
 
-destroy = false
+destroy = true
