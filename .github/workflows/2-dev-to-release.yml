@@ -22,6 +22,7 @@ jobs:
     name: Terraform
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    environment: dev
 
     steps:
       - name: Checkout
@@ -33,7 +34,7 @@ jobs:
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          role-to-assume: arn:aws:iam::403339561517:role/github-actions-terraform-dev
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/github-actions-terraform-dev
           aws-region: sa-east-1
 
       - name: Extract API name from tfvars
@@ -101,7 +102,7 @@ jobs:
         working-directory: infra
         run: |
           terraform init -reconfigure \
-            -backend-config="bucket=teplotax-terraform-state-dev" \
+            -backend-config="bucket=teplotax-terraform-state-dev-${{ vars.AWS_ACCOUNT_ID }}" \
             -backend-config="key=dev/${{ steps.api.outputs.API_NAME }}/doc/terraform.tfstate" \
             -backend-config="region=sa-east-1"
 
