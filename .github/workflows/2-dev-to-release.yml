@@ -35,7 +35,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/github-actions-terraform-dev
-          aws-region: sa-east-1
+          aws-region: us-east-1
 
       - name: Extract API name from tfvars
         id: api
@@ -102,9 +102,9 @@ jobs:
         working-directory: infra
         run: |
           terraform init -reconfigure \
-            -backend-config="bucket=teplotax-terraform-state-dev-${{ vars.AWS_ACCOUNT_ID }}" \
+            -backend-config="bucket=g52-terraform-state-dev-${{ vars.AWS_ACCOUNT_ID }}" \
             -backend-config="key=dev/${{ steps.api.outputs.API_NAME }}/doc/terraform.tfstate" \
-            -backend-config="region=sa-east-1"
+            -backend-config="region=us-east-1"
 
       - name: Debug destroy flag
         run: echo "DESTROY=${{ steps.flags.outputs.DESTROY }}"
