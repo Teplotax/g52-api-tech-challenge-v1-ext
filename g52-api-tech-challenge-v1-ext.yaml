@@ -98,7 +98,7 @@ paths:
       x-amazon-apigateway-integration:
         type: http_proxy
         httpMethod: POST
-        uri: "http://${loadBalancerDnsKeycloak}/ordensDeServico"
+        uri: "http://${loadBalancerDnsKeycloak}/realms/g52/protocol/openid-connect/token"
         passthroughBehavior: when_no_match
         connectionType: INTERNET
   /ordensDeServico:
