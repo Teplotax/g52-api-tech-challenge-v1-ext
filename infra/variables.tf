@@ -18,6 +18,9 @@ variable "loadBalancerDnsMain" {
   type        = string
 }
 
+variable "loadBalancerDnsKeycloak" {
+  type        = string
+}
 
 variable "aws_account" {
   type        = string
