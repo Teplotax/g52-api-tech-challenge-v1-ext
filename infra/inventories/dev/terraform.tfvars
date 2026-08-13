@@ -6,4 +6,4 @@ apigateway_id       = "mjsur3jbx5"
 app_base_url        = "SET_BY_CI_FROM_APP_BASE_URL"
 auth_base_url       = "SET_BY_CI_FROM_AUTH_BASE_URL"
 log_retention_days  = 1
-destroy = false
+destroy = true
