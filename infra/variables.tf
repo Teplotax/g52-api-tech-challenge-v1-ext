@@ -14,11 +14,11 @@ variable "apigateway_id" {
   type        = string
 }
 
-variable "loadBalancerDnsMain" {
+variable "app_base_url" {
   type        = string
 }
 
-variable "loadBalancerDnsKeycloak" {
+variable "auth_base_url" {
   type        = string
 }
 

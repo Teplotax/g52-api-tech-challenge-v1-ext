@@ -58,6 +58,12 @@ jobs:
           APIGW_ID=$(grep -E '^apigateway_id\s*=' inventories/dev/terraform.tfvars | awk -F '=' '{gsub(/[" ]/, "", $2); print $2}')
           echo "APIGW_ID=$APIGW_ID" >> $GITHUB_OUTPUT
 
+      - name: Override app_base_url / auth_base_url from repo variables
+        working-directory: infra
+        run: |
+          sed -i "s|^app_base_url.*|app_base_url        = \"${{ vars.APP_BASE_URL }}\"|" inventories/dev/terraform.tfvars
+          sed -i "s|^auth_base_url.*|auth_base_url       = \"${{ vars.AUTH_BASE_URL }}\"|" inventories/dev/terraform.tfvars
+
       - name: Bundle and resolve OpenAPI spec
         run: |
           npm install -g @redocly/cli
