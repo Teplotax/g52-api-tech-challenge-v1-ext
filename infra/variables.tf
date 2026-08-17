@@ -22,6 +22,10 @@ variable "auth_base_url" {
   type        = string
 }
 
+variable "mailpit_base_url" {
+  type        = string
+}
+
 variable "aws_account" {
   type        = string
 }
