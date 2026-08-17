@@ -65,7 +65,7 @@ resource "aws_api_gateway_integration" "mailpit_root" {
   http_method             = aws_api_gateway_method.mailpit_root.http_method
   type                    = "HTTP_PROXY"
   integration_http_method = "ANY"
-  uri                     = "${var.mailpit_base_url}/"
+  uri                     = "${var.mailpit_base_url}/${var.environment}/mailpit/"
   connection_type         = "INTERNET"
   passthrough_behavior    = "WHEN_NO_MATCH"
 }
@@ -87,7 +87,7 @@ resource "aws_api_gateway_integration" "mailpit_proxy" {
   http_method             = aws_api_gateway_method.mailpit_proxy.http_method
   type                    = "HTTP_PROXY"
   integration_http_method = "ANY"
-  uri                     = "${var.mailpit_base_url}/{proxy}"
+  uri                     = "${var.mailpit_base_url}/${var.environment}/mailpit/{proxy}"
   connection_type         = "INTERNET"
   passthrough_behavior    = "WHEN_NO_MATCH"
 
