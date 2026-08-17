@@ -100,9 +100,14 @@ resource "aws_api_gateway_deployment" "this" {
   rest_api_id = var.apigateway_id
 
   triggers = {
-    redeployment = sha1(join(",", [
+    redeployment = sha1(jsonencode([
       file("${path.module}/openapi-resolved.json"),
-      "mailpit:${var.mailpit_base_url}",
+      aws_api_gateway_resource.mailpit.id,
+      aws_api_gateway_resource.mailpit_proxy.id,
+      aws_api_gateway_method.mailpit_root.id,
+      aws_api_gateway_integration.mailpit_root.uri,
+      aws_api_gateway_method.mailpit_proxy.id,
+      aws_api_gateway_integration.mailpit_proxy.uri,
     ]))
   }
 
