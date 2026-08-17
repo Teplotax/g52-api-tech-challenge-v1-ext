@@ -5,5 +5,6 @@ vpc_id              = "vpc-04055fee4b29e6c48"
 apigateway_id       = "mjsur3jbx5"
 app_base_url        = "SET_BY_CI_FROM_APP_BASE_URL"
 auth_base_url       = "SET_BY_CI_FROM_AUTH_BASE_URL"
+mailpit_base_url    = "SET_BY_CI_FROM_MAILPIT_BASE_URL"
 log_retention_days  = 1
 destroy = false

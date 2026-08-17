@@ -63,6 +63,7 @@ jobs:
         run: |
           sed -i "s|^app_base_url.*|app_base_url        = \"${{ vars.APP_BASE_URL }}\"|" inventories/dev/terraform.tfvars
           sed -i "s|^auth_base_url.*|auth_base_url       = \"${{ vars.AUTH_BASE_URL }}\"|" inventories/dev/terraform.tfvars
+          sed -i "s|^mailpit_base_url.*|mailpit_base_url    = \"${{ vars.MAILPIT_BASE_URL }}\"|" inventories/dev/terraform.tfvars
 
       - name: Bundle and resolve OpenAPI spec
         run: |
