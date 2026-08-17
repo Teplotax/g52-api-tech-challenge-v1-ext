@@ -35,13 +35,14 @@ resource "aws_cloudwatch_log_group" "apigw_stage" {
 # provisioned directly in Terraform instead of the OpenAPI spec and never shows up
 # in the published Swagger docs.
 
-data "aws_api_gateway_rest_api" "this" {
-  id = var.apigateway_id
+data "aws_api_gateway_resource" "root" {
+  rest_api_id = var.apigateway_id
+  path        = "/"
 }
 
 resource "aws_api_gateway_resource" "mailpit" {
   rest_api_id = var.apigateway_id
-  parent_id   = data.aws_api_gateway_rest_api.this.root_resource_id
+  parent_id   = data.aws_api_gateway_resource.root.id
   path_part   = "mailpit"
 }
 
