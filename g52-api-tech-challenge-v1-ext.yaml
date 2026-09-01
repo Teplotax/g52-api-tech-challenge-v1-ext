@@ -76,6 +76,31 @@ servers:
     description: Development
 
 paths:
+  /auth/token:
+    post:
+      summary: Obter access token
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+                grant_type:
+                  type: string
+      responses:
+        '200':
+          description: Token
+      x-amazon-apigateway-integration:
+        type: http_proxy
+        httpMethod: POST
+        uri: "${auth_base_url}/realms/g52/protocol/openid-connect/token"
+        passthroughBehavior: when_no_match
+        connectionType: INTERNET
   /ordensDeServico:
     post:
       tags:
@@ -131,7 +156,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico"
+        uri: "${app_base_url}/ordensDeServico"
         responses:
           default:
             statusCode: "503"
@@ -247,7 +272,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico"
+        uri: "${app_base_url}/ordensDeServico"
         responses:
           default:
             statusCode: "503"
@@ -313,7 +338,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}"
+        uri: "${app_base_url}/ordensDeServico/{osId}"
         responses:
           default:
             statusCode: "503"
@@ -375,7 +400,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/diagnosticar"
+        uri: "${app_base_url}/ordensDeServico/{osId}/diagnosticar"
         responses:
           default:
             statusCode: "503"
@@ -446,7 +471,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/adicionarServicos"
+        uri: "${app_base_url}/ordensDeServico/{osId}/adicionarServicos"
         responses:
           default:
             statusCode: "503"
@@ -504,7 +529,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/solicitarAprovacao"
+        uri: "${app_base_url}/ordensDeServico/{osId}/solicitarAprovacao"
         responses:
           default:
             statusCode: "503"
@@ -585,7 +610,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/aprovar"
+        uri: "${app_base_url}/ordensDeServico/{osId}/aprovar"
         responses:
           default:
             statusCode: "503"
@@ -644,7 +669,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/executar"
+        uri: "${app_base_url}/ordensDeServico/{osId}/executar"
         responses:
           default:
             statusCode: "503"
@@ -703,7 +728,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/finalizar"
+        uri: "${app_base_url}/ordensDeServico/{osId}/finalizar"
         responses:
           default:
             statusCode: "503"
@@ -765,7 +790,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/cancelar"
+        uri: "${app_base_url}/ordensDeServico/{osId}/cancelar"
         responses:
           default:
             statusCode: "503"
@@ -826,7 +851,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/ordensDeServico/{osId}/entregar"
+        uri: "${app_base_url}/ordensDeServico/{osId}/entregar"
         responses:
           default:
             statusCode: "503"
@@ -886,7 +911,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/clientes"
+        uri: "${app_base_url}/clientes"
         responses:
           default:
             statusCode: "503"
@@ -950,7 +975,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/clientes"
+        uri: "${app_base_url}/clientes"
         responses:
           default:
             statusCode: "503"
@@ -1020,7 +1045,7 @@ paths:
         type: "http_proxy"
         httpMethod: "PUT"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/clientes/{clienteId}"
+        uri: "${app_base_url}/clientes/{clienteId}"
         responses:
           default:
             statusCode: "503"
@@ -1078,7 +1103,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/clientes/{clienteId}"
+        uri: "${app_base_url}/clientes/{clienteId}"
         responses:
           default:
             statusCode: "503"
@@ -1131,7 +1156,7 @@ paths:
         type: "http_proxy"
         httpMethod: "DELETE"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/clientes/{clienteId}"
+        uri: "${app_base_url}/clientes/{clienteId}"
         responses:
           default:
             statusCode: "503"
@@ -1190,7 +1215,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/clientes/documento/{documento}"
+        uri: "${app_base_url}/clientes/documento/{documento}"
         responses:
           default:
             statusCode: "503"
@@ -1251,7 +1276,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/veiculos"
+        uri: "${app_base_url}/veiculos"
         responses:
           default:
             statusCode: "503"
@@ -1313,7 +1338,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/veiculos"
+        uri: "${app_base_url}/veiculos"
         responses:
           default:
             statusCode: "503"
@@ -1383,7 +1408,7 @@ paths:
         type: "http_proxy"
         httpMethod: "PUT"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/veiculos/{veiculoId}"
+        uri: "${app_base_url}/veiculos/{veiculoId}"
         responses:
           default:
             statusCode: "503"
@@ -1441,7 +1466,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/veiculos/{veiculoId}"
+        uri: "${app_base_url}/veiculos/{veiculoId}"
         responses:
           default:
             statusCode: "503"
@@ -1494,7 +1519,7 @@ paths:
         type: "http_proxy"
         httpMethod: "DELETE"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/veiculos/{veiculoId}"
+        uri: "${app_base_url}/veiculos/{veiculoId}"
         responses:
           default:
             statusCode: "503"
@@ -1553,7 +1578,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/veiculos/placa/{placa}"
+        uri: "${app_base_url}/veiculos/placa/{placa}"
         responses:
           default:
             statusCode: "503"
@@ -1614,7 +1639,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/produtos/pecas"
+        uri: "${app_base_url}/produtos/pecas"
         responses:
           default:
             statusCode: "503"
@@ -1682,7 +1707,7 @@ paths:
         type: "http_proxy"
         httpMethod: "PUT"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        uri: "${app_base_url}/produtos/pecas/{pecaId}"
         responses:
           default:
             statusCode: "503"
@@ -1740,7 +1765,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        uri: "${app_base_url}/produtos/pecas/{pecaId}"
         responses:
           default:
             statusCode: "503"
@@ -1793,7 +1818,7 @@ paths:
         type: "http_proxy"
         httpMethod: "DELETE"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/produtos/pecas/{pecaId}"
+        uri: "${app_base_url}/produtos/pecas/{pecaId}"
         responses:
           default:
             statusCode: "503"
@@ -1854,7 +1879,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/produtos/insumos"
+        uri: "${app_base_url}/produtos/insumos"
         responses:
           default:
             statusCode: "503"
@@ -1922,7 +1947,7 @@ paths:
         type: "http_proxy"
         httpMethod: "PUT"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/produtos/insumos/{insumoId}"
+        uri: "${app_base_url}/produtos/insumos/{insumoId}"
         responses:
           default:
             statusCode: "503"
@@ -1980,7 +2005,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/produtos/insumos/{insumoId}"
+        uri: "${app_base_url}/produtos/insumos/{insumoId}"
         responses:
           default:
             statusCode: "503"
@@ -2033,7 +2058,7 @@ paths:
         type: "http_proxy"
         httpMethod: "DELETE"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/produtos/insumos/{insumoId}"
+        uri: "${app_base_url}/produtos/insumos/{insumoId}"
         responses:
           default:
             statusCode: "503"
@@ -2087,7 +2112,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "http://${loadBalancerDnsMain}/produtos/ean/{ean}"
+        uri: "${app_base_url}/produtos/ean/{ean}"
         responses:
           default:
             statusCode: "503"
@@ -2148,7 +2173,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/produtos/estoque/entrada"
+        uri: "${app_base_url}/produtos/estoque/entrada"
         responses:
           default:
             statusCode: "503"
@@ -2209,7 +2234,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "http://${loadBalancerDnsMain}/produtos/estoque/saida"
+        uri: "${app_base_url}/produtos/estoque/saida"
         responses:
           default:
             statusCode: "503"
@@ -2269,7 +2294,7 @@ paths:
         type: "http_proxy"
         httpMethod: "POST"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/servicos"
+        uri: "${app_base_url}/servicos"
         responses:
           default:
             statusCode: "503"
@@ -2331,7 +2356,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/servicos"
+        uri: "${app_base_url}/servicos"
         responses:
           default:
             statusCode: "503"
@@ -2401,7 +2426,7 @@ paths:
         type: "http_proxy"
         httpMethod: "PUT"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/servicos/{servicoId}"
+        uri: "${app_base_url}/servicos/{servicoId}"
         responses:
           default:
             statusCode: "503"
@@ -2459,7 +2484,7 @@ paths:
         type: "http_proxy"
         httpMethod: "GET"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/servicos/{servicoId}"
+        uri: "${app_base_url}/servicos/{servicoId}"
         responses:
           default:
             statusCode: "503"
@@ -2512,7 +2537,7 @@ paths:
         type: "http_proxy"
         httpMethod: "DELETE"
         #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
-        uri: "http://${loadBalancerDnsMain}/servicos/{servicoId}"
+        uri: "${app_base_url}/servicos/{servicoId}"
         responses:
           default:
             statusCode: "503"
