@@ -14,10 +14,17 @@ variable "apigateway_id" {
   type        = string
 }
 
-variable "loadBalancerDnsMain" {
+variable "app_base_url" {
   type        = string
 }
 
+variable "auth_base_url" {
+  type        = string
+}
+
+variable "mailpit_base_url" {
+  type        = string
+}
 
 variable "aws_account" {
   type        = string
@@ -25,7 +32,7 @@ variable "aws_account" {
 
 variable "aws_region" {
   type        = string
-  default     = "sa-east-1"
+  default     = "us-east-1"
 }
 
 variable "log_retention_days" {
