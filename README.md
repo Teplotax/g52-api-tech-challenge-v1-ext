@@ -6,7 +6,7 @@ Esse repo guarda o contrato OpenAPI da API do G52 | Tech Challenge, é o que vir
 
 A especificação Swagger/OpenAPI é mantida no repositório [`doc-api-tech-challenge-v1`](https://github.com/Teplotax/doc-api-tech-challenge-v1) e publicada via **GitHub Pages**:
 
-👉 https://teplotax.github.io/doc-api-tech-challenge-v1/
+https://teplotax.github.io/doc-api-tech-challenge-v1/
 
 ## Sobre a API
 
