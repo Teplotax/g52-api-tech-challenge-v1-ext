@@ -123,6 +123,47 @@ paths:
         uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${auth_lambda_arn}/invocations"
         passthroughBehavior: "when_no_match"
         timeoutInMillis: 14000
+  /auth/token:
+    post:
+      tags:
+        - Autenticação
+      summary: Obter token administrativo (client_credentials)
+      description: |
+        Token da equipe da oficina (OAuth2 `client_credentials`), com acesso a todas as rotas.
+        As credenciais podem ir no corpo ou no header `Authorization: Basic base64(client_id:client_secret)`.
+        O token de cliente (`POST /auth`) acessa apenas a consulta e a aprovação das próprias OS.
+      operationId: post/auth/token
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/ClientCredentialsRequest"
+      responses:
+        "200":
+          description: Token emitido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+              examples:
+                AuthResponse:
+                  $ref: "#/components/examples/AuthResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${auth_lambda_arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        timeoutInMillis: 14000
   /.well-known/jwks.json:
     get:
       tags:
@@ -2550,7 +2591,7 @@ components:
       type: apiKey
       name: Authorization
       in: header
-      description: "JWT emitido em `POST /auth`, enviado como `Authorization: Bearer <token>`"
+      description: "JWT emitido em `POST /auth` (cliente) ou `POST /auth/token` (administrativo), enviado como `Authorization: Bearer <token>`"
       x-amazon-apigateway-authtype: custom
       x-amazon-apigateway-authorizer:
         type: token
@@ -2569,6 +2610,8 @@ components:
       $ref: ./schemas/AuthResponse.yaml
     JwksResponse:
       $ref: ./schemas/JwksResponse.yaml
+    ClientCredentialsRequest:
+      $ref: ./schemas/ClientCredentialsRequest.yaml
     FindClienteResponse:
       $ref: ./schemas/FindClienteResponse.yaml
     CreateClienteRequest:
