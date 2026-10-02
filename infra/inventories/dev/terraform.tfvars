@@ -1,10 +1,12 @@
 environment         = "dev"
 api_name            = "api-g52-tech-challenge-v1"
 aws_account         = "679084116705"
+aws_region          = "us-east-1"
 vpc_id              = "vpc-0c0fcb0a0221f6d85"
 apigateway_id       = "uqjslc5lb8"
 app_base_url        = "SET_BY_CI_FROM_APP_BASE_URL"
-auth_base_url       = "SET_BY_CI_FROM_AUTH_BASE_URL"
+auth_lambda_arn       = "arn:aws:lambda:us-east-1:679084116705:function:g52-lambda-auth"
+authorizer_lambda_arn = "arn:aws:lambda:us-east-1:679084116705:function:g52-lambda-auth-authorizer"
 mailpit_base_url    = "SET_BY_CI_FROM_MAILPIT_BASE_URL"
 log_retention_days  = 1
 destroy = false

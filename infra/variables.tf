@@ -18,7 +18,12 @@ variable "app_base_url" {
   type        = string
 }
 
-variable "auth_base_url" {
+# Função de autenticação por CPF e Lambda Authorizer (repositório g52-lambda-tech-challenge)
+variable "auth_lambda_arn" {
+  type        = string
+}
+
+variable "authorizer_lambda_arn" {
   type        = string
 }
 

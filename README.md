@@ -40,10 +40,31 @@ Ao cancelar uma OS, o que é liberado depende do status atual: antes de `APROVAD
 
 Ao solicitar aprovação, o sistema muda o status pra `AGUARDANDO_APROVACAO`, gera o orçamento em PDF e manda por e-mail com um link assinado (HMAC); o cliente aprova direto por ali, sem precisar logar. A aprovação pode ser total ou parcial.
 
+### Autenticação
+
+O cliente se autentica pelo CPF e recebe um JWT, emitido pela Function Serverless do repositório [`g52-lambda-tech-challenge`](https://github.com/Teplotax/g52-lambda-tech-challenge):
+
+```
+POST /auth                    {"cpf": "555.632.710-64"}  -> token de cliente (roles: CLIENTE)
+POST /auth/token              grant_type=client_credentials&client_id=...&client_secret=...  -> token administrativo (roles: ADMIN)
+GET  /.well-known/jwks.json   chave pública para validar o JWT
+```
+
+Essas três rotas são públicas e usam integração `aws_proxy` com a Lambda `g52-lambda-auth`. Todas as outras exigem `Authorization: Bearer <jwt>` e passam pelo **Lambda Authorizer** (`g52-lambda-auth-authorizer`, tipo TOKEN, com cache de 5 min):
+
+- Sem token, ou com token inválido ou expirado: `401`, antes de chegar na aplicação.
+- Token de **cliente** em rota administrativa: `403`. O cliente só acessa `GET /ordensDeServico`, `GET /ordensDeServico/{osId}` e `POST /ordensDeServico/{osId}/aprovar`.
+- Token **administrativo**: todas as rotas.
+
+A aplicação repete a validação do JWT e da role e, para o cliente, garante que ele só veja e aprove as próprias OS.
+
+Os ARNs das duas funções ficam em `infra/inventories/dev/terraform.tfvars` (`auth_lambda_arn`, `authorizer_lambda_arn`). As funções precisam existir antes do import do contrato.
+
 ### Recursos
 
 | Recurso | Descrição |
 |---------|-----------|
+| **Autenticação** | Autenticação por CPF (JWT) e JWKS |
 | **Ordens de Serviço** | Ciclo de vida completo da OS |
 | **Clientes** | Cadastro e consulta de clientes |
 | **Veículos** | Cadastro de veículos vinculados a clientes |

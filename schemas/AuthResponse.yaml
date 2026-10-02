@@ -1,0 +1,15 @@
+type: object
+properties:
+  access_token:
+    type: string
+    description: "JWT (RS256) a ser enviado no header `Authorization: Bearer <token>`"
+
+  token_type:
+    type: string
+    description: Tipo do token
+    example: Bearer
+
+  expires_in:
+    type: integer
+    description: Validade do token em segundos
+    example: 3600
