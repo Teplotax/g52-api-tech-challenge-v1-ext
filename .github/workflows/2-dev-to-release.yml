@@ -96,24 +96,6 @@ jobs:
           print("Substitutions done.")
           EOF
 
-      # O import em modo merge não remove recursos antigos: a rota /auth/token (proxy para o
-      # Keycloak) foi substituída por POST /auth (Lambda) e precisa ser apagada explicitamente.
-      - name: Remove legacy Keycloak route (/auth/token)
-        if: steps.flags.outputs.DESTROY != 'true'
-        run: |
-          LEGACY_ID=$(aws apigateway get-resources \
-            --rest-api-id "${{ steps.apigw.outputs.APIGW_ID }}" \
-            --limit 500 \
-            --query "items[?path=='/auth/token'].id" \
-            --output text)
-
-          if [ -n "$LEGACY_ID" ] && [ "$LEGACY_ID" != "None" ]; then
-            aws apigateway delete-resource --rest-api-id "${{ steps.apigw.outputs.APIGW_ID }}" --resource-id "$LEGACY_ID"
-            echo "Removed /auth/token ($LEGACY_ID)"
-          else
-            echo "/auth/token not found. Skipping."
-          fi
-
       - name: Import OpenAPI spec into API Gateway
         if: steps.flags.outputs.DESTROY != 'true'
         run: |
