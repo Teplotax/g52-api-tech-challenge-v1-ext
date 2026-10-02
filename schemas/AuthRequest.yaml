@@ -1,0 +1,8 @@
+type: object
+required:
+  - cpf
+properties:
+  cpf:
+    type: string
+    description: CPF do cliente, com ou sem máscara
+    example: "555.632.710-64"

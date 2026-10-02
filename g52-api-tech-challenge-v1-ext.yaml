@@ -76,31 +76,74 @@ servers:
     description: Development
 
 paths:
-  /auth/token:
+  /auth:
     post:
-      summary: Obter access token
+      tags:
+        - Autenticação
+      summary: Autenticar por CPF
+      description: |
+        Valida o CPF, verifica se o cliente existe e está habilitado e devolve um JWT (RS256)
+        para consumo das rotas protegidas. Envie o token no header `Authorization: Bearer <token>`.
+      operationId: post/auth
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
       requestBody:
         required: true
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
-              type: object
-              properties:
-                client_id:
-                  type: string
-                client_secret:
-                  type: string
-                grant_type:
-                  type: string
+              $ref: "#/components/schemas/AuthRequest"
+            examples:
+              AuthRequest:
+                $ref: "#/components/examples/AuthRequest"
       responses:
-        '200':
-          description: Token
+        "200":
+          description: Token emitido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+              examples:
+                AuthResponse:
+                  $ref: "#/components/examples/AuthResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
       x-amazon-apigateway-integration:
-        type: http_proxy
-        httpMethod: POST
-        uri: "${auth_base_url}/realms/g52/protocol/openid-connect/token"
-        passthroughBehavior: when_no_match
-        connectionType: INTERNET
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${auth_lambda_arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        timeoutInMillis: 14000
+  /.well-known/jwks.json:
+    get:
+      tags:
+        - Autenticação
+      summary: Chave pública do JWT (JWKS)
+      description: Chave pública RS256 usada para validar os tokens emitidos em `POST /auth`.
+      operationId: get/jwks
+      security: []
+      responses:
+        "200":
+          description: JWKS
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JwksResponse"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${auth_lambda_arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        timeoutInMillis: 14000
   /ordensDeServico:
     post:
       tags:
@@ -148,14 +191,12 @@ paths:
           $ref: "#/components/responses/409"
         "422":
           $ref: "#/components/responses/422"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/ordensDeServico"
         responses:
           default:
@@ -264,14 +305,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/ordensDeServico"
         responses:
           default:
@@ -330,14 +369,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/ordensDeServico/{osId}"
         responses:
           default:
@@ -392,14 +429,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/ordensDeServico/{osId}/diagnosticar"
         responses:
           default:
@@ -463,14 +498,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/ordensDeServico/{osId}/adicionarServicos"
         responses:
           default:
@@ -525,6 +558,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
@@ -602,14 +637,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/ordensDeServico/{osId}/aprovar"
         responses:
           default:
@@ -665,6 +698,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
@@ -724,6 +759,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
@@ -786,6 +823,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
@@ -847,6 +886,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
@@ -903,14 +944,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/clientes"
         responses:
           default:
@@ -967,14 +1006,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/clientes"
         responses:
           default:
@@ -1037,14 +1074,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/clientes/{clienteId}"
         responses:
           default:
@@ -1095,14 +1130,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/clientes/{clienteId}"
         responses:
           default:
@@ -1148,14 +1181,12 @@ paths:
           $ref: "#/components/responses/503"
         "422":
           $ref: "#/components/responses/422"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/clientes/{clienteId}"
         responses:
           default:
@@ -1207,14 +1238,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/clientes/documento/{documento}"
         responses:
           default:
@@ -1268,14 +1297,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/veiculos"
         responses:
           default:
@@ -1330,14 +1357,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/veiculos"
         responses:
           default:
@@ -1400,14 +1425,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/veiculos/{veiculoId}"
         responses:
           default:
@@ -1458,14 +1481,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/veiculos/{veiculoId}"
         responses:
           default:
@@ -1511,14 +1532,12 @@ paths:
           $ref: "#/components/responses/503"
         "422":
           $ref: "#/components/responses/422"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/veiculos/{veiculoId}"
         responses:
           default:
@@ -1570,14 +1589,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/veiculos/placa/{placa}"
         responses:
           default:
@@ -1631,14 +1648,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/produtos/pecas"
         responses:
           default:
@@ -1699,14 +1714,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/produtos/pecas/{pecaId}"
         responses:
           default:
@@ -1757,14 +1770,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/produtos/pecas/{pecaId}"
         responses:
           default:
@@ -1810,14 +1821,12 @@ paths:
           $ref: "#/components/responses/503"
         "422":
           $ref: "#/components/responses/422"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/produtos/pecas/{pecaId}"
         responses:
           default:
@@ -1871,14 +1880,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/produtos/insumos"
         responses:
           default:
@@ -1939,14 +1946,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/produtos/insumos/{insumoId}"
         responses:
           default:
@@ -1997,14 +2002,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/produtos/insumos/{insumoId}"
         responses:
           default:
@@ -2050,14 +2053,12 @@ paths:
           $ref: "#/components/responses/503"
         "422":
           $ref: "#/components/responses/422"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/produtos/insumos/{insumoId}"
         responses:
           default:
@@ -2108,6 +2109,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
@@ -2169,6 +2172,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
@@ -2230,6 +2235,8 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
@@ -2286,14 +2293,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/servicos"
         responses:
           default:
@@ -2348,14 +2353,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/servicos"
         responses:
           default:
@@ -2418,14 +2421,12 @@ paths:
           $ref: "#/components/responses/503"
         "409":
           $ref: "#/components/responses/409"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/servicos/{servicoId}"
         responses:
           default:
@@ -2476,14 +2477,12 @@ paths:
           $ref: "#/components/responses/500"
         "503":
           $ref: "#/components/responses/503"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/servicos/{servicoId}"
         responses:
           default:
@@ -2529,14 +2528,12 @@ paths:
           $ref: "#/components/responses/503"
         "422":
           $ref: "#/components/responses/422"
-      #      security:
-      #        - APIGatewaySTSAuthorizer:
-      #            - none
+      security:
+        - LambdaAuthorizer: []
       x-amazon-apigateway-integration:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        #        credentials: "arn:aws:iam::${pipes_deploy_aws_env_account}:role/iamsr/role-gateway-invoke-authorizer"
         uri: "${app_base_url}/servicos/{servicoId}"
         responses:
           default:
@@ -2548,12 +2545,30 @@ paths:
       x-amazon-apigateway-request-validator: params-only
 
 components:
+  securitySchemes:
+    LambdaAuthorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: "JWT emitido em `POST /auth`, enviado como `Authorization: Bearer <token>`"
+      x-amazon-apigateway-authtype: custom
+      x-amazon-apigateway-authorizer:
+        type: token
+        authorizerUri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${authorizer_lambda_arn}/invocations"
+        authorizerResultTtlInSeconds: 300
+        identityValidationExpression: "^[Bb]earer [-0-9a-zA-Z._~+/]+=*$"
   parameters:
     x_correlationid:
       $ref: ./parameters/x_correlationid.yaml
     authorization:
       $ref: ./parameters/authorization.yaml
   schemas:
+    AuthRequest:
+      $ref: ./schemas/AuthRequest.yaml
+    AuthResponse:
+      $ref: ./schemas/AuthResponse.yaml
+    JwksResponse:
+      $ref: ./schemas/JwksResponse.yaml
     FindClienteResponse:
       $ref: ./schemas/FindClienteResponse.yaml
     CreateClienteRequest:
@@ -2645,6 +2660,10 @@ components:
     EntregarOSResponse:
       $ref: ./schemas/EntregarOSResponse.yaml
   examples:
+    AuthRequest:
+      $ref: ./examples/requests/AuthRequest.yaml
+    AuthResponse:
+      $ref: ./examples/200AuthResponse.yaml
     FindClienteResponse:
       $ref: ./examples/200FindClienteResponse.yaml
     CreateClienteRequest:
@@ -2783,7 +2802,11 @@ x-amazon-apigateway-gateway-responses:
   UNAUTHORIZED:
     statusCode: 401
     responseTemplates:
-      application/json: "{\n \"message\": \"Expired Token\" \n }"
+      application/json: "{\"message\": \"Token ausente, inválido ou expirado. Autentique-se em POST /auth\", \"exceptionType\": \"Unauthorized\"}"
+  ACCESS_DENIED:
+    statusCode: 403
+    responseTemplates:
+      application/json: "{\"message\": \"Acesso negado\", \"exceptionType\": \"Forbidden\"}"
 DEFAULT_5XX:
   statusCode: 503
   responseTemplates:
