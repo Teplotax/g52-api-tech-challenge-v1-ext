@@ -57,6 +57,8 @@ jobs:
           DESTROY=$(grep -E '^destroy\s*=' $TFVARS | awk -F '=' '{gsub(/[[:space:]]/, "", $2); print $2}')
           # id do rest api pelo nome (o g52-infra-gateway pode recriar a api com outro id)
           APIGW_ID=$(aws apigateway get-rest-apis --query "items[?name=='$API_NAME'].id" --output text)
+          # sem nenhuma api na conta o cli devolve "None"
+          [ "$APIGW_ID" == "None" ] && APIGW_ID=""
           if [ "$(echo $APIGW_ID | wc -w)" -ne 1 ] && [ "$DESTROY" != "true" ]; then
             echo "esperava 1 rest api chamado $API_NAME, achei: '$APIGW_ID'" >&2
             exit 1
@@ -109,10 +111,14 @@ jobs:
       - name: Import OpenAPI spec into API Gateway
         if: ${{ !inputs.plan_only && steps.flags.outputs.DESTROY != 'true' }}
         run: |
+          # o import renomeia a api pro info.title; mantém o nome do terraform senão a busca por nome quebra
+          # (a cópia publicada na documentação continua com o título original)
+          jq --arg name "${{ steps.flags.outputs.API_NAME }}" '.info.title = $name' infra/openapi-resolved.json > openapi-import.json
+
           aws apigateway put-rest-api \
             --rest-api-id "${{ steps.flags.outputs.APIGW_ID }}" \
             --mode merge \
-            --body fileb://infra/openapi-resolved.json
+            --body fileb://openapi-import.json
 
       - name: Terraform Init
         working-directory: infra
