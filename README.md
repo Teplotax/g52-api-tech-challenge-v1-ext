@@ -50,7 +50,7 @@ POST /auth/token              grant_type=client_credentials&client_id=...&client
 GET  /.well-known/jwks.json   chave pública para validar o JWT
 ```
 
-Essas três rotas são públicas e usam integração `aws_proxy` com a Lambda `g52-lambda-auth`. Todas as outras exigem `Authorization: Bearer <jwt>` e passam pelo **Lambda Authorizer** (`g52-lambda-auth-authorizer`, tipo TOKEN, com cache de 5 min):
+Essas três rotas são públicas e usam integração `aws_proxy` com a Lambda `g52-lambda-auth-<ambiente>`. Todas as outras exigem `Authorization: Bearer <jwt>` e passam pelo **Lambda Authorizer** (`g52-lambda-auth-authorizer`, tipo TOKEN, com cache de 5 min):
 
 - Sem token, ou com token inválido ou expirado: `401`, antes de chegar na aplicação.
 - Token de **cliente** em rota administrativa: `403`. O cliente só acessa `GET /ordensDeServico`, `GET /ordensDeServico/{osId}` e `POST /ordensDeServico/{osId}/aprovar`.
@@ -85,6 +85,25 @@ Mesmo fluxo de branches dos outros repos do grupo (`feature → develop → rele
 
 - **1 - Build & PR** (`feature/**` → `develop`): push numa `feature/*` abre PR pra `develop` automaticamente.
 - **2 - Build and Deploy** (`develop`): empacota e resolve o OpenAPI (`redocly`), importa o spec resolvido no API Gateway via AWS CLI, roda o Terraform pra garantir o deploy do stage, sobe o spec resolvido pro repo de docs (`doc-api-tech-challenge-v1`) e cria a branch/PR de release.
-- **3 - Promote & Deploy** (`release/**` → `main`): PR de `develop` pra `release/*` mergeado → abre PR de `release/*` pra `main` automaticamente.
+- **3 - [HOM] Deploy & Promote** (`release/**`): PR de `develop` pra `release/*` mergeado → deploy do stage **hom** e abre PR de `release/*` pra `main` automaticamente.
+- **5 - [PROD] Deploy** (`main`): merge na `main` → deploy do stage **prod**.
+
+Os três chamam o workflow reutilizável `deploy.yml`, passando o ambiente.
+
+### Stages e stage variables
+
+O REST API é um só (`g52-infra-gateway-tech-challenge`), com um stage por ambiente: `/dev`, `/hom` e `/prod`. O contrato é igual para todos. O destino de cada stage vem de *stage variables*, definidas pelo Terraform de cada ambiente:
+
+| Stage variable | Uso |
+|---|---|
+| `appHost` | Host:porta da NLB da app do ambiente, nas integrações `http_proxy` |
+| `mailpitHost` | Host:porta da NLB do MailPit do ambiente (rota `/mailpit`) |
+| `authFunction` | Lambda de autenticação (`POST /auth`, `POST /auth/token`, JWKS) |
+| `authorizerFunction` | Lambda Authorizer |
+| `stage` | Nome do stage (prefixo do MailPit) |
+
+O `APP_BASE_URL` e o `MAILPIT_BASE_URL` de cada ambiente são publicados pelo pipeline da app no ambiente de mesmo nome deste repositório no GitHub. Por isso a app de um ambiente precisa subir antes do contrato dele.
+
+A rota `/mailpit` faz parte do OpenAPI importado, mas é removida da cópia publicada na documentação. A role de logs da conta do API Gateway fica no `g52-infra-gateway-tech-challenge`, porque vale para os três stages.
 
 Auth com AWS via OIDC, sem credenciais fixas.
