@@ -1,27 +1,6 @@
-resource "aws_iam_role" "apigw_cloudwatch" {
-  name = "role-apigateway-cloudwatch-${var.environment}"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect    = "Allow"
-      Principal = { Service = "apigateway.amazonaws.com" }
-      Action    = "sts:AssumeRole"
-    }]
-  })
-
-  tags = local.common_tags
-}
-
-resource "aws_iam_role_policy_attachment" "apigw_cloudwatch" {
-  role       = aws_iam_role.apigw_cloudwatch.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
-}
-
-resource "aws_api_gateway_account" "this" {
-  cloudwatch_role_arn = aws_iam_role.apigw_cloudwatch.arn
-
-  depends_on = [aws_iam_role_policy_attachment.apigw_cloudwatch]
+# rest api criado no g52-infra-gateway-tech-challenge; busca pelo nome pra não fixar o id
+data "aws_api_gateway_rest_api" "this" {
+  name = var.api_name
 }
 
 resource "aws_cloudwatch_log_group" "apigw_stage" {
@@ -30,104 +9,32 @@ resource "aws_cloudwatch_log_group" "apigw_stage" {
   tags              = local.common_tags
 }
 
-# ── MailPit passthrough ──────────────────────────────────────
-# Plumbing-only route for the dev inbox, not part of the OpenAPI contract, so it's
-# provisioned directly in Terraform instead of the OpenAPI spec and never shows up
-# in the published Swagger docs.
-
-data "aws_api_gateway_resource" "root" {
-  rest_api_id = var.apigateway_id
-  path        = "/"
-}
-
-resource "aws_api_gateway_resource" "mailpit" {
-  rest_api_id = var.apigateway_id
-  parent_id   = data.aws_api_gateway_resource.root.id
-  path_part   = "mailpit"
-}
-
-resource "aws_api_gateway_resource" "mailpit_proxy" {
-  rest_api_id = var.apigateway_id
-  parent_id   = aws_api_gateway_resource.mailpit.id
-  path_part   = "{proxy+}"
-}
-
-resource "aws_api_gateway_method" "mailpit_root" {
-  rest_api_id   = var.apigateway_id
-  resource_id   = aws_api_gateway_resource.mailpit.id
-  http_method   = "ANY"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "mailpit_root" {
-  rest_api_id             = var.apigateway_id
-  resource_id             = aws_api_gateway_resource.mailpit.id
-  http_method             = aws_api_gateway_method.mailpit_root.http_method
-  type                    = "HTTP_PROXY"
-  integration_http_method = "ANY"
-  uri                     = "${var.mailpit_base_url}/${var.environment}/mailpit/"
-  connection_type         = "INTERNET"
-  passthrough_behavior    = "WHEN_NO_MATCH"
-}
-
-resource "aws_api_gateway_method" "mailpit_proxy" {
-  rest_api_id   = var.apigateway_id
-  resource_id   = aws_api_gateway_resource.mailpit_proxy.id
-  http_method   = "ANY"
-  authorization = "NONE"
-
-  request_parameters = {
-    "method.request.path.proxy" = true
-  }
-}
-
-resource "aws_api_gateway_integration" "mailpit_proxy" {
-  rest_api_id             = var.apigateway_id
-  resource_id             = aws_api_gateway_resource.mailpit_proxy.id
-  http_method             = aws_api_gateway_method.mailpit_proxy.http_method
-  type                    = "HTTP_PROXY"
-  integration_http_method = "ANY"
-  uri                     = "${var.mailpit_base_url}/${var.environment}/mailpit/{proxy}"
-  connection_type         = "INTERNET"
-  passthrough_behavior    = "WHEN_NO_MATCH"
-
-  request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-  }
-}
-
+# rotas (inclusive /mailpit) vêm do openapi importado no pipeline; aqui só o stage do ambiente
 resource "aws_api_gateway_deployment" "this" {
-  rest_api_id = var.apigateway_id
+  rest_api_id = data.aws_api_gateway_rest_api.this.id
 
   triggers = {
-    redeployment = sha1(jsonencode([
-      file("${path.module}/openapi-resolved.json"),
-      aws_api_gateway_resource.mailpit.id,
-      aws_api_gateway_resource.mailpit_proxy.id,
-      aws_api_gateway_method.mailpit_root.id,
-      aws_api_gateway_integration.mailpit_root.uri,
-      aws_api_gateway_method.mailpit_proxy.id,
-      aws_api_gateway_integration.mailpit_proxy.uri,
-    ]))
+    redeployment = sha1(file("${path.module}/openapi-resolved.json"))
   }
 
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = [
-    aws_api_gateway_account.this,
-    aws_api_gateway_integration.mailpit_root,
-    aws_api_gateway_integration.mailpit_proxy,
-  ]
 }
 
 resource "aws_api_gateway_stage" "this" {
-  rest_api_id   = var.apigateway_id
+  rest_api_id   = data.aws_api_gateway_rest_api.this.id
   deployment_id = aws_api_gateway_deployment.this.id
   stage_name    = var.environment
 
-  depends_on = [aws_api_gateway_account.this]
+  # destino de cada stage: app (nlb), mailpit e lambdas do ambiente
+  variables = {
+    appHost            = replace(var.app_base_url, "/^https?:\\/\\//", "")
+    mailpitHost        = replace(var.mailpit_base_url, "/^https?:\\/\\//", "")
+    authFunction       = var.auth_function_name
+    authorizerFunction = var.authorizer_function_name
+    stage              = var.environment
+  }
 
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.apigw_stage.arn
@@ -146,4 +53,69 @@ resource "aws_api_gateway_stage" "this" {
   }
 
   tags = local.common_tags
+}
+
+# saíram daqui: a role de log da conta foi pro g52-infra-gateway (é uma só pros 3 stages)
+# e o /mailpit foi pro openapi. removed tira do state do dev sem apagar na aws
+removed {
+  from = aws_iam_role.apigw_cloudwatch
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_iam_role_policy_attachment.apigw_cloudwatch
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_api_gateway_account.this
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_api_gateway_resource.mailpit
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_api_gateway_resource.mailpit_proxy
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_api_gateway_method.mailpit_root
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_api_gateway_integration.mailpit_root
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_api_gateway_method.mailpit_proxy
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_api_gateway_integration.mailpit_proxy
+  lifecycle {
+    destroy = false
+  }
 }
