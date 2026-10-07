@@ -1,0 +1,148 @@
+name: "Deploy"
+
+# chamado pelos workflows de dev (develop), hom (release/*) e prod (main)
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      ref:
+        type: string
+        default: ""
+      plan_only:
+        type: boolean
+        default: false
+    outputs:
+      api_name:
+        value: ${{ jobs.terraform.outputs.api_name }}
+
+jobs:
+  terraform:
+    name: Terraform (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+
+    # o import do openapi mexe na api inteira, então um ambiente por vez
+    concurrency:
+      group: api-gateway
+      cancel-in-progress: false
+
+    env:
+      TFVARS: infra/inventories/${{ inputs.environment }}/terraform.tfvars
+
+    outputs:
+      api_name: ${{ steps.flags.outputs.API_NAME }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/github-actions-terraform-dev
+          aws-region: us-east-1
+
+      - name: Read flags from tfvars
+        id: flags
+        run: |
+          API_NAME=$(grep -E '^api_name\s*=' $TFVARS | awk -F '=' '{gsub(/[" ]/, "", $2); print $2}')
+          # id do rest api pelo nome (o g52-infra-gateway pode recriar a api com outro id)
+          APIGW_ID=$(aws apigateway get-rest-apis --query "items[?name=='$API_NAME'].id" --output text)
+          if [ "$(echo $APIGW_ID | wc -w)" -ne 1 ]; then
+            echo "esperava 1 rest api chamado $API_NAME, achei: '$APIGW_ID'" >&2
+            exit 1
+          fi
+          DESTROY=$(grep -E '^destroy\s*=' $TFVARS | awk -F '=' '{gsub(/[[:space:]]/, "", $2); print $2}')
+          echo "API_NAME=$API_NAME" >> $GITHUB_OUTPUT
+          echo "APIGW_ID=$APIGW_ID" >> $GITHUB_OUTPUT
+          echo "DESTROY=$DESTROY" >> $GITHUB_OUTPUT
+          echo "ENV=${{ inputs.environment }} API_NAME=$API_NAME APIGW_ID=$APIGW_ID DESTROY=$DESTROY"
+
+      # urls das nlbs publicadas pelo pipeline da app no ambiente do github
+      - name: Override app_base_url / mailpit_base_url from environment variables
+        run: |
+          if [ "${{ steps.flags.outputs.DESTROY }}" != "true" ] && [ -z "${{ vars.APP_BASE_URL }}" ]; then
+            echo "APP_BASE_URL vazio no ambiente ${{ inputs.environment }}: rode o deploy da app desse ambiente antes" >&2
+            exit 1
+          fi
+          sed -i "s|^app_base_url.*|app_base_url        = \"${{ vars.APP_BASE_URL }}\"|" $TFVARS
+          sed -i "s|^mailpit_base_url.*|mailpit_base_url    = \"${{ vars.MAILPIT_BASE_URL }}\"|" $TFVARS
+
+      - name: Bundle and resolve OpenAPI spec
+        run: |
+          npm install -g @redocly/cli
+          redocly bundle g52-api-tech-challenge-v1-ext.yaml -o infra/openapi-resolved.json --ext json --dereferenced
+
+          # troca ${var} pelos valores do tfvars; ${stageVariables.x} fica pro gateway resolver por stage
+          python3 - <<'EOF'
+          import os
+          import re
+
+          vars = {}
+          with open(os.environ["TFVARS"]) as f:
+              for line in f:
+                  line = line.strip()
+                  if not line or line.startswith("#"):
+                      continue
+                  key, _, value = line.partition("=")
+                  vars[key.strip()] = value.strip().strip('"')
+
+          with open("infra/openapi-resolved.json") as f:
+              content = f.read()
+
+          content = re.sub(r'\$\{(\w+)\}', lambda m: vars.get(m.group(1), m.group(0)), content)
+
+          with open("infra/openapi-resolved.json", "w") as f:
+              f.write(content)
+
+          print("Substitutions done.")
+          EOF
+
+      - name: Import OpenAPI spec into API Gateway
+        if: ${{ !inputs.plan_only && steps.flags.outputs.DESTROY != 'true' }}
+        run: |
+          aws apigateway put-rest-api \
+            --rest-api-id "${{ steps.flags.outputs.APIGW_ID }}" \
+            --mode merge \
+            --body fileb://infra/openapi-resolved.json
+
+      - name: Terraform Init
+        working-directory: infra
+        run: |
+          terraform init -reconfigure \
+            -backend-config="bucket=g52-terraform-state-dev-${{ vars.AWS_ACCOUNT_ID }}" \
+            -backend-config="key=${{ inputs.environment }}/${{ steps.flags.outputs.API_NAME }}/doc/terraform.tfstate" \
+            -backend-config="region=us-east-1"
+
+      - name: Terraform Validate
+        working-directory: infra
+        run: terraform validate
+
+      - name: Terraform Plan
+        if: inputs.plan_only
+        working-directory: infra
+        run: terraform plan -var-file=inventories/${{ inputs.environment }}/terraform.tfvars
+
+      - name: Terraform Destroy
+        if: ${{ !inputs.plan_only && steps.flags.outputs.DESTROY == 'true' }}
+        working-directory: infra
+        run: terraform destroy -auto-approve -var-file=inventories/${{ inputs.environment }}/terraform.tfvars
+
+      - name: Terraform Apply
+        if: ${{ !inputs.plan_only && steps.flags.outputs.DESTROY != 'true' }}
+        working-directory: infra
+        run: terraform apply -auto-approve -var-file=inventories/${{ inputs.environment }}/terraform.tfvars
+
+      - name: Upload OpenAPI resolved spec
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-resolved-${{ inputs.environment }}
+          path: infra/openapi-resolved.json
