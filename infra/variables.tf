@@ -10,20 +10,16 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "apigateway_id" {
-  type        = string
-}
-
 variable "app_base_url" {
   type        = string
 }
 
-# Função de autenticação por CPF e Lambda Authorizer (repositório g52-lambda-tech-challenge)
-variable "auth_lambda_arn" {
+# lambdas do ambiente (repo g52-lambda-tech-challenge), viram stage variables
+variable "auth_function_name" {
   type        = string
 }
 
-variable "authorizer_lambda_arn" {
+variable "authorizer_function_name" {
   type        = string
 }
 

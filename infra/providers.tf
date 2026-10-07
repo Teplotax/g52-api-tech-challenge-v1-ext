@@ -1,5 +1,6 @@
 terraform {
-  required_version = ">= 1.6"
+  # 1.7+ por causa dos blocos removed
+  required_version = ">= 1.7"
 
   required_providers {
     aws = {
