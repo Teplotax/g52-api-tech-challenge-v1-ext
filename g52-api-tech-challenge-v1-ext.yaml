@@ -120,7 +120,7 @@ paths:
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${auth_lambda_arn}/invocations"
+        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${aws_region}:${aws_account}:function:${stageVariables.authFunction}/invocations"
         passthroughBehavior: "when_no_match"
         timeoutInMillis: 14000
   /auth/token:
@@ -161,7 +161,7 @@ paths:
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${auth_lambda_arn}/invocations"
+        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${aws_region}:${aws_account}:function:${stageVariables.authFunction}/invocations"
         passthroughBehavior: "when_no_match"
         timeoutInMillis: 14000
   /.well-known/jwks.json:
@@ -182,7 +182,7 @@ paths:
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${auth_lambda_arn}/invocations"
+        uri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${aws_region}:${aws_account}:function:${stageVariables.authFunction}/invocations"
         passthroughBehavior: "when_no_match"
         timeoutInMillis: 14000
   /ordensDeServico:
@@ -238,7 +238,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico"
+        uri: "http://${stageVariables.appHost}/ordensDeServico"
         responses:
           default:
             statusCode: "503"
@@ -352,7 +352,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/ordensDeServico"
+        uri: "http://${stageVariables.appHost}/ordensDeServico"
         responses:
           default:
             statusCode: "503"
@@ -416,7 +416,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/ordensDeServico/{osId}"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}"
         responses:
           default:
             statusCode: "503"
@@ -476,7 +476,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico/{osId}/diagnosticar"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}/diagnosticar"
         responses:
           default:
             statusCode: "503"
@@ -545,7 +545,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico/{osId}/adicionarServicos"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}/adicionarServicos"
         responses:
           default:
             statusCode: "503"
@@ -605,7 +605,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico/{osId}/solicitarAprovacao"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}/solicitarAprovacao"
         responses:
           default:
             statusCode: "503"
@@ -684,7 +684,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico/{osId}/aprovar"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}/aprovar"
         responses:
           default:
             statusCode: "503"
@@ -745,7 +745,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico/{osId}/executar"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}/executar"
         responses:
           default:
             statusCode: "503"
@@ -806,7 +806,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico/{osId}/finalizar"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}/finalizar"
         responses:
           default:
             statusCode: "503"
@@ -870,7 +870,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico/{osId}/cancelar"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}/cancelar"
         responses:
           default:
             statusCode: "503"
@@ -933,7 +933,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/ordensDeServico/{osId}/entregar"
+        uri: "http://${stageVariables.appHost}/ordensDeServico/{osId}/entregar"
         responses:
           default:
             statusCode: "503"
@@ -991,7 +991,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/clientes"
+        uri: "http://${stageVariables.appHost}/clientes"
         responses:
           default:
             statusCode: "503"
@@ -1053,7 +1053,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/clientes"
+        uri: "http://${stageVariables.appHost}/clientes"
         responses:
           default:
             statusCode: "503"
@@ -1121,7 +1121,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        uri: "${app_base_url}/clientes/{clienteId}"
+        uri: "http://${stageVariables.appHost}/clientes/{clienteId}"
         responses:
           default:
             statusCode: "503"
@@ -1177,7 +1177,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/clientes/{clienteId}"
+        uri: "http://${stageVariables.appHost}/clientes/{clienteId}"
         responses:
           default:
             statusCode: "503"
@@ -1228,7 +1228,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        uri: "${app_base_url}/clientes/{clienteId}"
+        uri: "http://${stageVariables.appHost}/clientes/{clienteId}"
         responses:
           default:
             statusCode: "503"
@@ -1285,7 +1285,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/clientes/documento/{documento}"
+        uri: "http://${stageVariables.appHost}/clientes/documento/{documento}"
         responses:
           default:
             statusCode: "503"
@@ -1344,7 +1344,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/veiculos"
+        uri: "http://${stageVariables.appHost}/veiculos"
         responses:
           default:
             statusCode: "503"
@@ -1404,7 +1404,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/veiculos"
+        uri: "http://${stageVariables.appHost}/veiculos"
         responses:
           default:
             statusCode: "503"
@@ -1472,7 +1472,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        uri: "${app_base_url}/veiculos/{veiculoId}"
+        uri: "http://${stageVariables.appHost}/veiculos/{veiculoId}"
         responses:
           default:
             statusCode: "503"
@@ -1528,7 +1528,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/veiculos/{veiculoId}"
+        uri: "http://${stageVariables.appHost}/veiculos/{veiculoId}"
         responses:
           default:
             statusCode: "503"
@@ -1579,7 +1579,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        uri: "${app_base_url}/veiculos/{veiculoId}"
+        uri: "http://${stageVariables.appHost}/veiculos/{veiculoId}"
         responses:
           default:
             statusCode: "503"
@@ -1636,7 +1636,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/veiculos/placa/{placa}"
+        uri: "http://${stageVariables.appHost}/veiculos/placa/{placa}"
         responses:
           default:
             statusCode: "503"
@@ -1695,7 +1695,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/produtos/pecas"
+        uri: "http://${stageVariables.appHost}/produtos/pecas"
         responses:
           default:
             statusCode: "503"
@@ -1761,7 +1761,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        uri: "${app_base_url}/produtos/pecas/{pecaId}"
+        uri: "http://${stageVariables.appHost}/produtos/pecas/{pecaId}"
         responses:
           default:
             statusCode: "503"
@@ -1817,7 +1817,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/produtos/pecas/{pecaId}"
+        uri: "http://${stageVariables.appHost}/produtos/pecas/{pecaId}"
         responses:
           default:
             statusCode: "503"
@@ -1868,7 +1868,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        uri: "${app_base_url}/produtos/pecas/{pecaId}"
+        uri: "http://${stageVariables.appHost}/produtos/pecas/{pecaId}"
         responses:
           default:
             statusCode: "503"
@@ -1927,7 +1927,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/produtos/insumos"
+        uri: "http://${stageVariables.appHost}/produtos/insumos"
         responses:
           default:
             statusCode: "503"
@@ -1993,7 +1993,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        uri: "${app_base_url}/produtos/insumos/{insumoId}"
+        uri: "http://${stageVariables.appHost}/produtos/insumos/{insumoId}"
         responses:
           default:
             statusCode: "503"
@@ -2049,7 +2049,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/produtos/insumos/{insumoId}"
+        uri: "http://${stageVariables.appHost}/produtos/insumos/{insumoId}"
         responses:
           default:
             statusCode: "503"
@@ -2100,7 +2100,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        uri: "${app_base_url}/produtos/insumos/{insumoId}"
+        uri: "http://${stageVariables.appHost}/produtos/insumos/{insumoId}"
         responses:
           default:
             statusCode: "503"
@@ -2156,7 +2156,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/produtos/ean/{ean}"
+        uri: "http://${stageVariables.appHost}/produtos/ean/{ean}"
         responses:
           default:
             statusCode: "503"
@@ -2219,7 +2219,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/produtos/estoque/entrada"
+        uri: "http://${stageVariables.appHost}/produtos/estoque/entrada"
         responses:
           default:
             statusCode: "503"
@@ -2282,7 +2282,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/produtos/estoque/saida"
+        uri: "http://${stageVariables.appHost}/produtos/estoque/saida"
         responses:
           default:
             statusCode: "503"
@@ -2340,7 +2340,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "POST"
-        uri: "${app_base_url}/servicos"
+        uri: "http://${stageVariables.appHost}/servicos"
         responses:
           default:
             statusCode: "503"
@@ -2400,7 +2400,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/servicos"
+        uri: "http://${stageVariables.appHost}/servicos"
         responses:
           default:
             statusCode: "503"
@@ -2468,7 +2468,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "PUT"
-        uri: "${app_base_url}/servicos/{servicoId}"
+        uri: "http://${stageVariables.appHost}/servicos/{servicoId}"
         responses:
           default:
             statusCode: "503"
@@ -2524,7 +2524,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "GET"
-        uri: "${app_base_url}/servicos/{servicoId}"
+        uri: "http://${stageVariables.appHost}/servicos/{servicoId}"
         responses:
           default:
             statusCode: "503"
@@ -2575,7 +2575,7 @@ paths:
         timeoutInMillis: 14000
         type: "http_proxy"
         httpMethod: "DELETE"
-        uri: "${app_base_url}/servicos/{servicoId}"
+        uri: "http://${stageVariables.appHost}/servicos/{servicoId}"
         responses:
           default:
             statusCode: "503"
@@ -2585,6 +2585,40 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
+  /mailpit:
+    x-amazon-apigateway-any-method:
+      summary: MailPit (inbox de e-mails do ambiente)
+      operationId: any/mailpit
+      security: []
+      responses:
+        "200":
+          description: OK
+      x-amazon-apigateway-integration:
+        type: "http_proxy"
+        httpMethod: "ANY"
+        uri: "http://${stageVariables.mailpitHost}/${stageVariables.stage}/mailpit/"
+        passthroughBehavior: "when_no_match"
+  /mailpit/{proxy+}:
+    x-amazon-apigateway-any-method:
+      summary: MailPit (inbox de e-mails do ambiente)
+      operationId: any/mailpit/proxy
+      security: []
+      parameters:
+        - name: proxy
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+      x-amazon-apigateway-integration:
+        type: "http_proxy"
+        httpMethod: "ANY"
+        uri: "http://${stageVariables.mailpitHost}/${stageVariables.stage}/mailpit/{proxy}"
+        passthroughBehavior: "when_no_match"
+        requestParameters:
+          integration.request.path.proxy: "method.request.path.proxy"
 components:
   securitySchemes:
     LambdaAuthorizer:
@@ -2595,7 +2629,7 @@ components:
       x-amazon-apigateway-authtype: custom
       x-amazon-apigateway-authorizer:
         type: token
-        authorizerUri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${authorizer_lambda_arn}/invocations"
+        authorizerUri: "arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${aws_region}:${aws_account}:function:${stageVariables.authorizerFunction}/invocations"
         authorizerResultTtlInSeconds: 300
         identityValidationExpression: "^[Bb]earer [-0-9a-zA-Z._~+/]+=*$"
   parameters:
