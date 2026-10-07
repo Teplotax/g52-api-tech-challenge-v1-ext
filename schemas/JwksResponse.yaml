@@ -1,0 +1,27 @@
+type: object
+properties:
+  keys:
+    type: array
+    description: Chaves públicas (JWK) para validação dos tokens
+    items:
+      type: object
+      properties:
+        kty:
+          type: string
+          example: RSA
+        kid:
+          type: string
+          description: Identificador da chave (thumbprint RFC 7638), presente no header do JWT
+        use:
+          type: string
+          example: sig
+        alg:
+          type: string
+          example: RS256
+        n:
+          type: string
+          description: Módulo da chave RSA (base64url)
+        e:
+          type: string
+          description: Expoente da chave RSA (base64url)
+          example: AQAB

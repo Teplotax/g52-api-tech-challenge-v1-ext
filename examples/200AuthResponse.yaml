@@ -1,0 +1,5 @@
+summary: Exemplo de token emitido
+value:
+  access_token: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijk4dE5..."
+  token_type: "Bearer"
+  expires_in: 3600

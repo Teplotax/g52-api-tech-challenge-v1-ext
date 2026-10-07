@@ -1,11 +1,11 @@
-environment         = "dev"
+environment         = "hom"
 api_name            = "api-g52-tech-challenge-v1"
 aws_account         = "679084116705"
 aws_region          = "us-east-1"
 vpc_id              = "vpc-0c0fcb0a0221f6d85"
 app_base_url        = "SET_BY_CI_FROM_APP_BASE_URL"
-auth_function_name       = "g52-lambda-auth-dev"
-authorizer_function_name = "g52-lambda-auth-dev-authorizer"
+auth_function_name       = "g52-lambda-auth-hom"
+authorizer_function_name = "g52-lambda-auth-hom-authorizer"
 mailpit_base_url    = "SET_BY_CI_FROM_MAILPIT_BASE_URL"
 log_retention_days  = 1
-destroy = true
+destroy = false

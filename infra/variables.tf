@@ -10,15 +10,16 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "apigateway_id" {
-  type        = string
-}
-
 variable "app_base_url" {
   type        = string
 }
 
-variable "auth_base_url" {
+# lambdas do ambiente (repo g52-lambda-tech-challenge), viram stage variables
+variable "auth_function_name" {
+  type        = string
+}
+
+variable "authorizer_function_name" {
   type        = string
 }
 
