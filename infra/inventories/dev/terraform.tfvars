@@ -9,4 +9,4 @@ auth_lambda_arn       = "arn:aws:lambda:us-east-1:679084116705:function:g52-lamb
 authorizer_lambda_arn = "arn:aws:lambda:us-east-1:679084116705:function:g52-lambda-auth-authorizer"
 mailpit_base_url    = "SET_BY_CI_FROM_MAILPIT_BASE_URL"
 log_retention_days  = 1
-destroy = false
+destroy = true
