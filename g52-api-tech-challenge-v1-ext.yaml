@@ -2585,6 +2585,25 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
+  /health:
+    get:
+      tags:
+        - Monitoramento
+      summary: Healthcheck da aplicação
+      description: Status da aplicação e do banco (actuator), usado pelo monitor de uptime. Público.
+      operationId: get/health
+      security: []
+      responses:
+        "200":
+          description: Aplicação no ar
+        "503":
+          $ref: "#/components/responses/503"
+      x-amazon-apigateway-integration:
+        type: "http_proxy"
+        httpMethod: "GET"
+        uri: "http://${stageVariables.appHost}/actuator/health"
+        passthroughBehavior: "when_no_match"
+        timeoutInMillis: 10000
   /mailpit:
     x-amazon-apigateway-any-method:
       summary: MailPit (inbox de e-mails do ambiente)
