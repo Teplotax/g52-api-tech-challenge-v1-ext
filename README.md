@@ -2,11 +2,26 @@
 
 Esse repo guarda o contrato OpenAPI da API do G52 | Tech Challenge, é o que vira a especificação importada no API Gateway da AWS (por isso o `-ext`, de extensions do `x-amazon-apigateway-integration`).
 
-## Documentação da API
+## Links
 
-A especificação Swagger/OpenAPI é mantida no repositório [`doc-api-tech-challenge-v1`](https://github.com/Teplotax/doc-api-tech-challenge-v1) e publicada via **GitHub Pages**:
+| | |
+|---|---|
+| Documentação da API (Swagger) | https://teplotax.github.io/doc-api-tech-challenge-v1/ |
+| Collection Postman/Insomnia | Enviada no PDF de entrega, porque contém CPFs de teste do seed |
+| Arquitetura da solução (diagramas, RFCs, ADRs) | [`g52-app-tech-challenge/docs/arquitetura`](https://github.com/Teplotax/g52-app-tech-challenge/tree/main/docs/arquitetura) |
+| Pipelines | [GitHub Actions](https://github.com/Teplotax/g52-api-tech-challenge-v1-ext/actions) |
 
-https://teplotax.github.io/doc-api-tech-challenge-v1/
+### Deploys
+
+Todos os ambientes respondem pelo mesmo API Gateway, com um stage por ambiente:
+
+| Ambiente | URL base | Healthcheck |
+|---|---|---|
+| dev | https://08onkvn4jb.execute-api.us-east-1.amazonaws.com/dev | [`/dev/health`](https://08onkvn4jb.execute-api.us-east-1.amazonaws.com/dev/health) |
+| hom | https://08onkvn4jb.execute-api.us-east-1.amazonaws.com/hom | [`/hom/health`](https://08onkvn4jb.execute-api.us-east-1.amazonaws.com/hom/health) |
+| prod | https://08onkvn4jb.execute-api.us-east-1.amazonaws.com/prod | [`/prod/health`](https://08onkvn4jb.execute-api.us-east-1.amazonaws.com/prod/health) |
+
+Para economizar, os ambientes ficam desligados quando não estão em uso ([ADR-003](https://github.com/Teplotax/g52-app-tech-challenge/blob/main/docs/arquitetura/adrs/ADR-003-ambientes.md)). O healthcheck mostra se um ambiente está no ar.
 
 ## Sobre a API
 
@@ -58,7 +73,7 @@ Essas três rotas são públicas e usam integração `aws_proxy` com a Lambda `g
 
 A aplicação repete a validação do JWT e da role e, para o cliente, garante que ele só veja e aprove as próprias OS.
 
-Os ARNs das duas funções ficam em `infra/inventories/dev/terraform.tfvars` (`auth_lambda_arn`, `authorizer_lambda_arn`). As funções precisam existir antes do import do contrato.
+Os nomes das duas funções de cada ambiente ficam em `infra/inventories/<ambiente>/terraform.tfvars` (`auth_function_name`, `authorizer_function_name`) e viram stage variables. As funções precisam existir antes do deploy do stage.
 
 ### Recursos
 
@@ -73,13 +88,62 @@ Os ARNs das duas funções ficam em `infra/inventories/dev/terraform.tfvars` (`a
 | **Serviços** | Catálogo de serviços oferecidos pela oficina |
 | **Estoque** | Entrada e saída de estoque por EAN (batch) |
 
+## Arquitetura
+
+```mermaid
+flowchart LR
+    yaml["g52-api-tech-challenge-v1-ext.yaml<br/>+ schemas, responses, examples"]
+    bundle["redocly bundle<br/>(spec resolvido)"]
+    docs["doc-api-tech-challenge-v1<br/>GitHub Pages"]
+
+    subgraph apigw["REST API api-g52-tech-challenge-v1"]
+        st["stages /dev · /hom · /prod<br/>stage variables"]
+    end
+
+    auth["Lambda g52-lambda-auth-{env}"]
+    authz["Lambda Authorizer"]
+    app["NLB da app {env}"]
+    mp["NLB do MailPit {env}"]
+
+    yaml --> bundle
+    bundle -- "put-rest-api --mode merge" --> apigw
+    bundle -- "sem /mailpit (só no dev)" --> docs
+    st -- "authFunction · AWS_PROXY" --> auth
+    st -- "authorizerFunction" --> authz
+    st -- "appHost · HTTP_PROXY" --> app
+    st -- "mailpitHost" --> mp
+```
+
+## Tecnologias
+
+OpenAPI 3.0 com extensões `x-amazon-apigateway-*`, Redocly CLI, AWS CLI, Terraform (provider `aws`), Amazon API Gateway (REST) e GitHub Actions com OIDC.
+
 ## Estrutura do repo
 
-- `template-api-v1-ext.yaml`: arquivo principal do contrato (OpenAPI 3.0)
-- `schemas/`, `responses/`, `examples/`, `parameters/`: pedaços reaproveitáveis referenciados via `$ref` no template
-- `infra/`: Terraform que importa o spec resolvido no API Gateway (REST API já existente, gerenciada no repo de infra)
+- `g52-api-tech-challenge-v1-ext.yaml`: arquivo principal do contrato (OpenAPI 3.0)
+- `schemas/`, `responses/`, `examples/`, `parameters/`: pedaços reaproveitáveis referenciados via `$ref`
+- `infra/`: Terraform do stage de cada ambiente (deployment, stage variables e access log). O REST API já existe e é gerenciado no `g52-infra-gateway-tech-challenge`
+- `infra/inventories/{dev,hom,prod}/terraform.tfvars`: funções Lambda e URLs da app de cada ambiente
 
-## Workflows (GitHub Actions)
+## Execução local
+
+Para validar e resolver o contrato, como o pipeline faz:
+
+```bash
+npm install -g @redocly/cli
+redocly lint g52-api-tech-challenge-v1-ext.yaml
+redocly bundle g52-api-tech-challenge-v1-ext.yaml -o openapi-resolved.json --ext json --dereferenced
+```
+
+O import manual no API Gateway mantém o `info.title` igual ao nome do REST API, senão o import renomeia o API e os outros repositórios deixam de encontrá-lo:
+
+```bash
+API_ID=$(aws apigateway get-rest-apis --query "items[?name=='api-g52-tech-challenge-v1'].id" --output text)
+jq '.info.title = "api-g52-tech-challenge-v1"' openapi-resolved.json > openapi-import.json
+aws apigateway put-rest-api --rest-api-id "$API_ID" --mode merge --body fileb://openapi-import.json
+```
+
+## Deploy (CI/CD)
 
 Mesmo fluxo de branches dos outros repos do grupo (`feature → develop → release → main`), só que aqui o que rola é deploy do contrato, não de aplicação:
 
@@ -107,3 +171,15 @@ O `APP_BASE_URL` e o `MAILPIT_BASE_URL` de cada ambiente são publicados pelo pi
 A rota `/mailpit` faz parte do OpenAPI importado, mas é removida da cópia publicada na documentação. A role de logs da conta do API Gateway fica no `g52-infra-gateway-tech-challenge`, porque vale para os três stages.
 
 Auth com AWS via OIDC, sem credenciais fixas.
+
+## Repositórios do projeto
+
+| Repositório | Conteúdo |
+|---|---|
+| [g52-app-tech-challenge](https://github.com/Teplotax/g52-app-tech-challenge) | Aplicação Spring Boot, manifestos Kubernetes e documentação de arquitetura |
+| [g52-lambda-tech-challenge](https://github.com/Teplotax/g52-lambda-tech-challenge) | Function Serverless de autenticação (CPF e `client_credentials`) e Lambda Authorizer |
+| [g52-infra-eks-tech-challenge](https://github.com/Teplotax/g52-infra-eks-tech-challenge) | Cluster EKS, ECR, add-ons e observabilidade (New Relic) |
+| [g52-infra-rds-tech-challenge](https://github.com/Teplotax/g52-infra-rds-tech-challenge) | Banco gerenciado (RDS PostgreSQL) e modelo de dados |
+| [g52-infra-gateway-tech-challenge](https://github.com/Teplotax/g52-infra-gateway-tech-challenge) | REST API do API Gateway e roles da conta |
+| **g52-api-tech-challenge-v1-ext** (este) | Contrato OpenAPI importado no API Gateway (stages dev/hom/prod) |
+| [doc-api-tech-challenge-v1](https://github.com/Teplotax/doc-api-tech-challenge-v1) | Swagger publicado no GitHub Pages |
