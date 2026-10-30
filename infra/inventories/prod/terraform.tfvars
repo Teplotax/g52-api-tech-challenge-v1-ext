@@ -8,4 +8,4 @@ auth_function_name       = "g52-lambda-auth-prod"
 authorizer_function_name = "g52-lambda-auth-prod-authorizer"
 mailpit_base_url    = "SET_BY_CI_FROM_MAILPIT_BASE_URL"
 log_retention_days  = 1
-destroy = true
+destroy = false
