@@ -68,7 +68,7 @@ GET  /.well-known/jwks.json   chave pública para validar o JWT
 Essas três rotas são públicas e usam integração `aws_proxy` com a Lambda `g52-lambda-auth-<ambiente>`. Todas as outras exigem `Authorization: Bearer <jwt>` e passam pelo **Lambda Authorizer** (`g52-lambda-auth-authorizer`, tipo TOKEN, com cache de 5 min):
 
 - Sem token, ou com token inválido ou expirado: `401`, antes de chegar na aplicação.
-- Token de **cliente** em rota administrativa: `403`. O cliente só acessa `GET /ordensDeServico`, `GET /ordensDeServico/{osId}` e `POST /ordensDeServico/{osId}/aprovar`.
+- Token de **cliente** em rota administrativa: `403`. O cliente só acessa `GET /clientes/documento/{documento}` e `GET /clientes/documento/{documento}/veiculos` (o próprio cadastro e os próprios veículos), `GET /ordensDeServico`, `GET /ordensDeServico/{osId}` e `POST /ordensDeServico/{osId}/aprovar`.
 - Token **administrativo**: todas as rotas.
 
 A aplicação repete a validação do JWT e da role e, para o cliente, garante que ele só veja e aprove as próprias OS.
