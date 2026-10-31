@@ -1,0 +1,9 @@
+summary: Exemplo de resposta para consulta dos veículos de um cliente
+value:
+  - id: 1
+    clienteId: 1
+    placa: "ABC1A23"
+    marca: "Toyota"
+    modelo: "Corolla"
+    cor: "Prata"
+    ano: 2020

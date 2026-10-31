@@ -1295,6 +1295,66 @@ paths:
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
 
+  /clientes/documento/{documento}/veiculos:
+    get:
+      tags:
+        - Clientes
+      summary: Listar Veículos do Cliente por documento
+      description: |
+        Retorna os veículos de um cliente pelo número de CPF ou CNPJ.
+
+        Com token de cliente (CPF), só é possível consultar os próprios veículos. Um documento de outro cliente responde `404`.
+      operationId: get/clientes/documento/{documento}/veiculos
+      parameters:
+        - $ref: "#/components/parameters/x_correlationid"
+        - $ref: "#/components/parameters/authorization"
+        - name: documento
+          in: path
+          description: Número do documento de identificação
+          required: true
+          schema:
+            type: string
+          example: "55563271064"
+      responses:
+        "200":
+          description: Veículos do cliente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListVeiculosClienteResponse"
+              examples:
+                ListVeiculosClienteResponse:
+                  $ref: "#/components/examples/ListVeiculosClienteResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+        "503":
+          $ref: "#/components/responses/503"
+      security:
+        - LambdaAuthorizer: []
+      x-amazon-apigateway-integration:
+        timeoutInMillis: 14000
+        type: "http_proxy"
+        httpMethod: "GET"
+        uri: "http://${stageVariables.appHost}/clientes/documento/{documento}/veiculos"
+        responses:
+          default:
+            statusCode: "503"
+        passthroughBehavior: "when_no_match"
+        requestParameters:
+          integration.request.path.documento: "method.request.path.documento"
+          integration.request.header.x-correlationid: "method.request.header.x-correlationid"
+      x-amazon-apigateway-request-validator: params-only
+
   /veiculos:
     post:
       tags:
@@ -2689,6 +2749,8 @@ components:
       $ref: ./schemas/UpdateVeiculoResponse.yaml
     ListVeiculosResponse:
       $ref: ./schemas/ListVeiculosResponse.yaml
+    ListVeiculosClienteResponse:
+      $ref: ./schemas/ListVeiculosClienteResponse.yaml
     FindPecaResponse:
       $ref: ./schemas/FindPecaResponse.yaml
     CreatePecaRequest:
@@ -2784,6 +2846,8 @@ components:
       $ref: ./examples/200UpdateVeiculoResponse.yaml
     ListVeiculosResponse:
       $ref: ./examples/200ListVeiculosResponse.yaml
+    ListVeiculosClienteResponse:
+      $ref: ./examples/200ListVeiculosClienteResponse.yaml
 
     FindPecaResponse:
       $ref: ./examples/200FindPecaResponse.yaml
