@@ -6,7 +6,7 @@ Esse repo guarda o contrato OpenAPI da API do G52 | Tech Challenge, é o que vir
 
 | | |
 |---|---|
-| Documentação da API (Swagger) | https://teplotax.github.io/doc-api-tech-challenge-v1/ |
+| Documentação da API (Swagger) | https://teplotax.github.io/doc-api-g52-tech-challenge-v1/ |
 | Collection Postman/Insomnia | Enviada no PDF de entrega, porque contém CPFs de teste do seed |
 | Arquitetura da solução (diagramas, RFCs, ADRs) | [`g52-app-tech-challenge/docs/arquitetura`](https://github.com/Teplotax/g52-app-tech-challenge/tree/main/docs/arquitetura) |
 | Pipelines | [GitHub Actions](https://github.com/Teplotax/g52-api-tech-challenge-v1-ext/actions) |
@@ -94,7 +94,7 @@ Os nomes das duas funções de cada ambiente ficam em `infra/inventories/<ambien
 flowchart LR
     yaml["g52-api-tech-challenge-v1-ext.yaml<br/>+ schemas, responses, examples"]
     bundle["redocly bundle<br/>(spec resolvido)"]
-    docs["doc-api-tech-challenge-v1<br/>GitHub Pages"]
+    docs["doc-api-g52-tech-challenge-v1<br/>GitHub Pages"]
 
     subgraph apigw["REST API api-g52-tech-challenge-v1"]
         st["stages /dev · /hom · /prod<br/>stage variables"]
@@ -107,7 +107,7 @@ flowchart LR
 
     yaml --> bundle
     bundle -- "put-rest-api --mode merge" --> apigw
-    bundle -- "sem /mailpit (só no dev)" --> docs
+    bundle -- "sem /mailpit (só no hom)" --> docs
     st -- "authFunction · AWS_PROXY" --> auth
     st -- "authorizerFunction" --> authz
     st -- "appHost · HTTP_PROXY" --> app
@@ -148,8 +148,8 @@ aws apigateway put-rest-api --rest-api-id "$API_ID" --mode merge --body fileb://
 Mesmo fluxo de branches dos outros repos do grupo (`feature → develop → release → main`), só que aqui o que rola é deploy do contrato, não de aplicação:
 
 - **1 - Build & PR** (`feature/**` → `develop`): push numa `feature/*` abre PR pra `develop` automaticamente.
-- **2 - Build and Deploy** (`develop`): empacota e resolve o OpenAPI (`redocly`), importa o spec resolvido no API Gateway via AWS CLI, roda o Terraform pra garantir o deploy do stage, sobe o spec resolvido pro repo de docs (`doc-api-tech-challenge-v1`) e cria a branch/PR de release.
-- **3 - [HOM] Deploy & Promote** (`release/**`): PR de `develop` pra `release/*` mergeado → deploy do stage **hom** e abre PR de `release/*` pra `main` automaticamente.
+- **2 - Build and Deploy** (`develop`): empacota e resolve o OpenAPI (`redocly`), importa o spec resolvido no API Gateway via AWS CLI, roda o Terraform pra garantir o deploy do stage e cria a branch/PR de release.
+- **3 - [HOM] Deploy & Promote** (`release/**`): PR de `develop` pra `release/*` mergeado → deploy do stage **hom**, sobe o spec resolvido do hom pro repo de docs (`doc-api-g52-tech-challenge-v1`), que publica o Swagger no GitHub Pages, e abre PR de `release/*` pra `main` automaticamente.
 - **5 - [PROD] Deploy** (`main`): merge na `main` → deploy do stage **prod**.
 
 Os três chamam o workflow reutilizável `deploy.yml`, passando o ambiente.
@@ -182,4 +182,4 @@ Auth com AWS via OIDC, sem credenciais fixas.
 | [g52-infra-rds-tech-challenge](https://github.com/Teplotax/g52-infra-rds-tech-challenge) | Banco gerenciado (RDS PostgreSQL) e modelo de dados |
 | [g52-infra-gateway-tech-challenge](https://github.com/Teplotax/g52-infra-gateway-tech-challenge) | REST API do API Gateway e roles da conta |
 | **g52-api-tech-challenge-v1-ext** (este) | Contrato OpenAPI importado no API Gateway (stages dev/hom/prod) |
-| [doc-api-tech-challenge-v1](https://github.com/Teplotax/doc-api-tech-challenge-v1) | Swagger publicado no GitHub Pages |
+| [doc-api-g52-tech-challenge-v1](https://github.com/Teplotax/doc-api-g52-tech-challenge-v1) | Swagger publicado no GitHub Pages |
