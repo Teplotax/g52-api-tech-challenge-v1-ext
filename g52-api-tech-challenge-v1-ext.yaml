@@ -358,14 +358,6 @@ paths:
             statusCode: "503"
         passthroughBehavior: "when_no_match"
         requestParameters:
-          integration.request.querystring.placa: "method.request.querystring.placa"
-          integration.request.querystring.documentoCliente: "method.request.querystring.documentoCliente"
-          integration.request.querystring.status: "method.request.querystring.status"
-          integration.request.querystring.complexidade: "method.request.querystring.complexidade"
-          integration.request.querystring.dataInicio: "method.request.querystring.dataInicio"
-          integration.request.querystring.dataFim: "method.request.querystring.dataFim"
-          integration.request.querystring.page: "method.request.querystring.page"
-          integration.request.querystring.size: "method.request.querystring.size"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
   /ordensDeServico/{osId}:
@@ -1059,8 +1051,6 @@ paths:
             statusCode: "503"
         passthroughBehavior: "when_no_match"
         requestParameters:
-          integration.request.querystring.page: "method.request.querystring.page"
-          integration.request.querystring.size: "method.request.querystring.size"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
   /clientes/{clienteId}:
@@ -1470,8 +1460,6 @@ paths:
             statusCode: "503"
         passthroughBehavior: "when_no_match"
         requestParameters:
-          integration.request.querystring.page: "method.request.querystring.page"
-          integration.request.querystring.size: "method.request.querystring.size"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
   /veiculos/{veiculoId}:
@@ -2466,8 +2454,6 @@ paths:
             statusCode: "503"
         passthroughBehavior: "when_no_match"
         requestParameters:
-          integration.request.querystring.page: "method.request.querystring.page"
-          integration.request.querystring.size: "method.request.querystring.size"
           integration.request.header.x-correlationid: "method.request.header.x-correlationid"
       x-amazon-apigateway-request-validator: params-only
   /servicos/{servicoId}:
